@@ -45,9 +45,13 @@
             </nav>
 
             <main>
-            <section class="default-section" data-path="dashboard">
+            <section class="default-section dashboard isActive" data-path="dashboard">
                 <div class="title">
                     <h1>Dashboard</h1>
+                    <button id="add-new-account">
+                        <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                        <span class="text">New user</span>
+                    </button>
                 </div>
 
                 <div class="content">
@@ -55,6 +59,8 @@
                         <tr>
                             <td>ID</td>
                             <td>UID</td>
+                            <td>Nickname</td>
+                            <td>Tag</td>
                             <td>Date</td>
                             <td>Messages</td>
                             <td>Latest update</td>
@@ -66,6 +72,8 @@
                         <tr>
                             <td>#1</td>
                             <td>@test</td>
+                            <td>chappie</td>
+                            <td>BOT</td>
                             <td>17.08.2025, 17:25:43</td>
                             <td>100</td>
                             <td>17.08.2025, 17:25:43</td>
@@ -103,14 +111,14 @@
                                         <span>Type</span>
                                         <select name="upd-type" id="upd-type">
                                             <option value="bot">Bot</option>
-                                            <option value="user">User</option>
+                                            <option selected value="user">User</option>
                                         </select>
                                     </label>
                                     <label>
                                         <span>This user is blocked?</span>
                                         <select name="upd-blocked" id="upd-blocked">
                                             <option value="blocked">Yes</option>
-                                            <option value="not-blocked">No</option>
+                                            <option selected value="not-blocked">No</option>
                                         </select>
                                     </label>
                                 </div>
@@ -124,6 +132,456 @@
                     </div>
                 </div>
         </section>
+
+
+        <section class="default-section accounts" data-path="accounts">
+            <div class="title">
+                    <h1>Accounts</h1>
+                    <button id="add-new-account">
+                        <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                        <span class="text">New user</span>
+                    </button>
+            </div>
+
+            <div class="content">
+                <table class="table-title">
+                        <tr>
+                            <td>ID</td>
+                            <td>API_ID</td>
+                            <td>API_HASH</td>
+                            <td>Phone</td>
+                            <td>SESSION_FILE</td>
+                            <td>Date</td>
+                            <td>Latest update</td>
+                            <td></td>
+                        </tr>
+                    </table>
+
+                    <table class="table-content">
+                        <tr>
+                            <td class="id">#1</td>
+                            <td title="z1UA3iLqw4TI2BscfTxktxwPIFgCaj4PBVET5e0SzIJkEQ59fWMeKZOe50x7rsuM">z1UA3iLqw4TI2BscfTxktxwPIFgCaj4PBVET5e0SzIJkEQ59fWMeKZOe50x7rsuM</td>
+                            <td title="6i6wmkXsAPm1j2vAU5mAzM1tgsWlkAPxyZ4M0W6hUw9M9RHgMVwhgoPRPc81zFDH">6i6wmkXsAPm1j2vAU5mAzM1tgsWlkAPxyZ4M0W6hUw9M9RHgMVwhgoPRPc81zFDH</td>
+                            <td>+76574826798</td>
+                            <td>.tg_session</td>
+                            <td>17.08.2025, 14:44:32</td>
+                            <td>17.08.2025, 14:44:32</td>
+                            <td class="show-update">UPDATE</td>
+                        </tr>
+                </table>
+
+                <div class="update-container">
+                        <div class="close-btn">
+                            &times;
+                        </div>
+                        <div class="container">
+                            <h1>Update <span class="account">+76574826798</span></h1>
+                            <div class="form">
+                                <div class="min-container">
+                                    <label>
+                                        <span>Phone number</span>
+                                        <input type="text" class="phone-number" placeholder="+7xxxxxxxx" id="upd-phone-number">
+                                    </label>
+                                    <label>
+                                        <span>API_ID</span>
+                                        <input type="text" class="API_ID" placeholder="API_ID" id="upd-API_ID">
+                                    </label>
+                                    <label>
+                                        <span>API_HASH</span>
+                                        <input type="text" class="API_HASH" placeholder="API_HASH" id="upd-API_HASH">
+                                    </label>
+                                    <label>
+                                        <span>SESSION_FILE</span>
+                                        <input type="file" class="SESSION_FILE" id="upd-SESSION_FILE">
+                                    </label>
+                                </div>
+                                <div class="min-container selects">
+                                    <label>
+                                        <span>Type</span>
+                                        <select name="upd-type" id="upd-type">
+                                            <option value="active">Active</option>
+                                            <option value="in_active">Not active</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>Status</span>
+                                        <select name="upd-status" id="upd-status">
+                                            <option value="banned">banned</option>
+                                            <option selected value="safe">safe</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <textarea id="about" placeholder="about..."></textarea>
+                            </div>
+                            <div class="actions">
+                                <button id="upd-save">Save</button>
+                                <button id="upd-delete">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </section>
+
+        <section class="default-section settings" data-path="settings">
+            <div class="title">
+                    <h1>Settings</h1>
+            </div>
+            
+            <div class="content">
+                <div class="settings-block">
+                <h2>General</h2>
+                <label class="setting-item">
+                    Theme:
+                    <select>
+                        <option selected>Light</option>
+                        <option>Dark</option>
+                    </select>
+                </label>
+                <label class="setting-item">
+                    Language:
+                    <select>
+                        <option>English</option>
+                        <option>Русский</option>
+                    </select>
+                </label>
+                <label class="setting-item">
+                    <span>Auto-start with Windows</span>
+                    <input type="checkbox">
+                    <span class="switcher"></span>
+                </label>
+                <label class="setting-item">
+                    <span>Minimize to tray on close</span>
+                    <input type="checkbox">
+                    <span class="switcher"></span>
+                </label>
+                </div>
+
+                <div class="settings-block">
+                    <h2>Accounts</h2>
+                    <button class="default-button">Reconnect Telegram session</button>
+                    <button class="default-button">Remove session</button>
+                    <button class="default-button">Change 2FA / Auth settings</button>
+                </div>
+
+                <div class="settings-block">
+                <h2>Logs & Data</h2>
+                <label class="setting-item">
+                    Keep logs for
+                    <input type="number" value="30" min="1" style="width:60px">
+                    days
+                </label>
+                <div class="setting-buttons">
+                    <button class="default-button">Clear logs</button>
+                    <button class="default-button">Export JSON</button>
+                    <button class="default-button">Export CSV</button>
+                    <button class="default-button">Backup settings</button>
+                    <button class="default-button">Restore settings</button>
+                </div>
+                </div>
+
+                <div class="settings-block">
+                <h2>Notifications</h2>
+                <label class="setting-item">
+                    <span>Enable sound</span>
+                    <input type="checkbox">
+                    <span class="switcher"></span>
+                </label>
+                <label class="setting-item">
+                    <span>Show popup notifications</span>
+                    <input type="checkbox">
+                    <span class="switcher"></span>
+                </label>
+                <label class="setting-item">
+                    Filters:
+                    <select>
+                    <option>All messages</option>
+                    <option>Only mentions</option>
+                    <option>Specific chats</option>
+                    </select>
+                </label>
+                </div>
+
+                <div class="settings-block">
+                <h2>Security</h2>
+                <label class="setting-item">
+                    <input type="checkbox"> Require PIN/password on startup
+                </label>
+                <label class="setting-item">
+                    Auto-lock after
+                    <input type="number" value="5" min="1" style="width:50px">
+                    minutes of inactivity
+                </label>
+                <label class="setting-item">
+                    <span>Encrypt logs & data</span>
+                    <input type="checkbox">
+                    <span class="switcher"></span>
+                </label>
+                </div>
+
+                <div class="settings-block">
+                <h2>System</h2>
+                <button class="default-button">Check for updates</button>
+                <label class="setting-item">
+                    Choose backup folder:
+                    <input type="file" webkitdirectory directory>
+                </label>
+                <div class="about">
+                    <p><strong>Telegram Logger v1.0</strong></p>
+                    <p>by <span class="colored" data-color="crimson">aket0r</span></p>
+                    <p><a href="https://github.com/aket0r" target="_blank">GitHub</a></p>
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="default-section logs" data-path="logs">
+            <div class="title">
+                    <h1>
+                        Logs
+                        <span class="open-logs-file">Open file</span>
+                    </h1>
+            </div>
+
+            <div class="content">
+                <div class="logs-output">
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                    <div class="logs-item">
+                        <span class="date">[17.08.2025, 22:18:38]</span>
+                        <span class="text">User logged in...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="default-section terminal" data-path="terminal">
+            <div class="title">
+                    <h1>Terminal</h1>
+            </div>
+
+            <div class="content">
+                <div class="terminal">
+                    <div class="output">
+                        <div class="item status-error">
+                            <span class="date">[17.08.2025, 22:21:14]</span>
+                            <span class="text">ERROR TEST MESSAGE</span>
+                        </div>
+                        <div class="item status-warning">
+                            <span class="date">[17.08.2025, 22:21:14]</span>
+                            <span class="text">WARNING TEST MESSAGE</span>
+                        </div>
+                        <div class="item status-success">
+                            <span class="date">[17.08.2025, 22:21:14]</span>
+                            <span class="text">SUCCESS TEST MESSAGE</span>
+                        </div>
+                        <div class="item status-default">
+                            <span class="date">[17.08.2025, 22:21:14]</span>
+                            <span class="text">DEFAULT TEST MESSAGE</span>
+                        </div>
+                    </div>
+
+                    <div class="input">
+                        <input type="text" placeholder="Enter command or '/help'" class="terminal-input">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="default-section backup" data-path="backup">
+            <div class="title">
+                    <h1>Backup</h1>
+            </div>
+
+            <div class="content">
+                <div class="backup-container">
+                    <h1>Could not find backup</h1>
+                    <button id="create-new-backup">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        Create
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="default-section file-manager" data-path="file-manager">
+            <div class="title">
+                    <h1>File Manager</h1>
+            </div>
+
+            <div class="content">
+                <table class="table-title">
+                        <tr>
+                            <td>ID</td>
+                            <td>File</td>
+                            <td>Date</td>
+                            <td>is Modify</td>
+                            <td>Created by</td>
+                            <td>Path</td>
+                            <td></td>
+                        </tr>
+                    </table>
+
+                    <table class="table-content">
+                        <tr>
+                            <td>#1</td>
+                            <td>logs.txt</td>
+                            <td>17.08.2025, 22:53:14</td>
+                            <td>Yes</td>
+                            <td>System</td>
+                            <td>assets/data/logs.txt</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>#2</td>
+                            <td>start.json</td>
+                            <td>17.08.2025, 22:53:14</td>
+                            <td>Yes</td>
+                            <td>System</td>
+                            <td>assets/data/start.json</td>
+                            <td></td>
+                        </tr>
+                </table>
+            </div>
+        </section>
+
     </main>
         </header>
 
@@ -152,7 +610,7 @@
             <div class="stats">
                 <div class="block users-block">
                     <h2 class="title">Users</h2>
-                    <h1 class="count">0</h1>
+                    <h1 class="count">1</h1>
                 </div>
                 <div class="block users-block">
                     <h2 class="title">Logs</h2>
@@ -160,7 +618,7 @@
                 </div>
                 <div class="block users-block">
                     <h2 class="title">Storage</h2>
-                    <h1 class="count">0</h1>
+                    <h1 class="count">7%</h1>
                 </div>
                 <div class="block users-block">
                     <h2 class="title">Accounts</h2>

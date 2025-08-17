@@ -13,6 +13,14 @@ body {
 }
 
 
+section {
+    display: none;
+}
+
+section.isActive {
+    display: block;
+}
+
 section.main {
     width: calc(100% - 15rem - 10px);
     margin-left: calc(15rem + 10px);
@@ -170,11 +178,13 @@ header nav .side .account .container {
     position: absolute;
     top: 60px;
     left: -140px;
-    background: #fff;
+    background: transparent;
     padding: 0;
     min-width: 200px;
     border: 1px solid #9999;
     display: none;
+    z-index: 1;
+    backdrop-filter: blur(10px);
 }
 
 header nav .side .account .container.active {
@@ -183,7 +193,7 @@ header nav .side .account .container.active {
 
 header nav .side .container li {
     list-style: none;
-    background: #fff;
+    background: transparent;
     width: 100%;
     padding: 10px 15px;
     cursor: pointer;
@@ -195,7 +205,7 @@ header nav .side .container li i {
 }
 
 header nav .side .container li:active {
-    background-color: #eee;
+    background-color: #eeeeee73;
 }
 
 
@@ -272,6 +282,13 @@ header nav .side .container li:active {
     width: 100%;
 }
 
+.default-section .content table {
+    table-layout: fixed;       /* фиксированная раскладка */
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
 .default-section .content table.table-content {
     border-bottom: 1px solid #9999;
 }
@@ -302,12 +319,14 @@ header nav .side .container li:active {
 }
 
 .default-section .content table tr td {
-    display: block;
-    padding: 20px 15px;
-    width: 100%;
+    display: table-cell;
+    padding: 10px 15px;
     font-size: 14px;
     user-select: none;
+    vertical-align: middle;
+    width: 100%;
 }
+
 
 .default-section .content table tr td:last-child {
     color: #008fc9;
@@ -315,9 +334,33 @@ header nav .side .container li:active {
     cursor: pointer;
 }
 
-.default-section .content .table-content tr td:nth-child(2) {
+
+.default-section .content .table-content tr td:nth-child(2),
+.default-section .content .table-content tr td:nth-child(3) {
     color: crimson;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
+
+.default-section.accounts .content .table-content tr td:nth-child(5) {
+    color: #00c911;
+}
+
+.default-section.accounts .content .table-content tr td:nth-child(2),
+.default-section.accounts .content .table-content tr td:nth-child(3) {
+    max-width: max-content;
+}
+
+.default-section.accounts .content .table-content tr td:nth-child(2),
+.default-section.accounts .content .table-content tr td:nth-child(3),
+.default-section.accounts .content .table-content tr td:nth-child(4) {
+    max-width: 125px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 
 .default-section .update-container .form {
     display: flex;
@@ -424,4 +467,285 @@ header nav .side .container li:active {
 
 .default-section .update-container .form select option {
 
+}
+
+
+.default-section #add-new-account {
+    display: flex;
+    position: relative;
+    left: 90%;
+    width: 100px;
+    padding: 10px;
+    background: royalblue;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    top: -35px;
+    user-select: none;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.default-section #add-new-account:active {
+    background: rgb(73, 118, 255);
+}
+
+.default-section.logs .open-logs-file {
+    color: skyblue;
+    text-decoration: underline;
+    font-size: 16px;
+    position: relative;
+    left: 85%;
+    cursor: pointer;
+    user-select: none;
+}
+
+.default-section.logs .logs-output {
+    background: #ddd;
+    overflow-y: auto;
+    max-height: 540px;
+} 
+
+
+.default-section.terminal .terminal .output {
+    background: #000;
+    color: #fff;
+    padding: 15px;
+    height: 460px;
+    overflow-y: auto;
+}
+
+
+.default-section.terminal .terminal .output .item {
+    display: flex;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    font-family: monospace;
+}
+
+.default-section.terminal .terminal .output .item span {
+    font-size: 14px;
+    margin: 0 10px;
+}
+
+.default-section.terminal .terminal .output .item.status-warning {
+    color: yellow;
+}
+
+.default-section.terminal .terminal .output .item.status-error {
+    color: crimson;
+}
+
+.default-section.terminal .terminal .output .item.status-success {
+    color: lime;
+}
+
+.default-section.terminal .terminal .input {
+    width: 100%;
+}
+
+.default-section.terminal .terminal .input input {
+    background: #000;
+    color: #fff;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-top: 1px solid #444;
+    font-size: 14px;
+    outline: none;
+    font-family: monospace;
+}
+
+.default-section.backup .backup-container {
+    display: flex;
+    width: 100%;
+    background: #fff;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.default-section.backup .backup-container h1 {
+    font-size: 24px;
+}
+
+.default-section.backup .backup-container button {
+    padding: 10px 15px;
+    font-size: 20px;
+    margin-top: 30px;
+    border: none;
+    background: royalblue;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.default-section.backup .backup-container button i {
+    margin-right: 10px;
+}
+
+.default-section.file-manager .content .table-content tr td:nth-child(2), .default-section.file-manager .content .table-content tr td:nth-child(2),
+.default-section.file-manager .content .table-content tr td:nth-child(2), .default-section.file-manager .content .table-content tr td:nth-child(6),
+.default-section.file-manager .content .table-content tr td:nth-child(2), .default-section.file-manager .content .table-content tr td:nth-child(3) {
+    overflow: none;
+    white-space: none;
+    text-overflow: inherit;
+    text-decoration: none;
+    color: #000;
+    width: 110%;
+    user-select: none;
+}
+
+.default-section.file-manager .content .table-content tr td:nth-child(2), .default-section.file-manager .content .table-content tr td:nth-child(6) {
+    color: #ff9a75;
+    overflow: hidden;
+    white-space: nowrap;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.default-section.settings {
+    user-select: none;
+}
+
+.default-section.settings .settings-block h2 {
+    font-weight: 100;
+    margin-bottom: 10px;
+}
+
+.default-section.settings .settings-block label {
+
+}
+
+.default-section.settings .content {
+  padding: 20px;
+}
+
+.default-section.settings .settings-block {
+  margin-bottom: 30px;
+}
+
+.default-section.settings .settings-block button {
+    background: #fff;
+    border: 1px solid #9999;
+    padding: 10px 15px;
+    cursor: pointer;
+    user-select: none;
+    display: block;
+    min-width: 220px;
+    margin: 15px 0;
+}
+
+.default-section.settings .settings-block button:hover {
+    background-color: #dce0ffee;
+}
+
+.default-section.settings .settings-block button:active {
+    background-color: #a8b2ffee;
+}
+
+.default-section.settings .settings-block h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: crimson;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+
+.default-section.settings .setting-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+/* сам переключатель */
+.default-section.settings .setting-item .switcher {
+  position: relative;          /* важно для ::before */
+  width: 40px;
+  height: 25px;
+  border-radius: 14px;
+  background: #878787ee;
+  transition: background .2s;
+}
+
+/* бегунок */
+.default-section.settings .setting-item .switcher::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform .2s;
+}
+
+/* скрываем стандартный чекбокс (по желанию) */
+.default-section.settings .setting-item input[type="checkbox"] {
+  appearance: none;
+  position: absolute;
+  opacity: 0;
+}
+
+/* КЛЮЧ: селектор соседства с .switcher, а не полный путь */
+.default-section.settings .setting-item input:checked + .switcher {
+  background: crimson; /* твой цвет */
+}
+
+.default-section.settings .setting-item input:checked + .switcher::before {
+  transform: translateX(15px);
+}
+
+
+.default-section.settings .setting-item input[type="checkbox"],
+.default-section.settings .setting-item input[type="number"],
+.default-section.settings .setting-item select {
+  margin-left: auto;
+  outline: none;
+}
+
+.default-section.settings .setting-item input[type="checkbox"] {
+    display: none;
+}
+
+.default-section.settings .setting-item input[type="number"] {
+    padding: 5px;
+    width: 130px !important;
+    border: 1px solid #9999;
+    border-radius: 0;
+}
+
+.default-section.settings .setting-item select {
+    margin-left: auto;
+    padding: 5px 15px;
+    border: 1px solid #9999;
+    appearance: none;
+    width: 100px;
+    text-align: center;
+}
+
+.default-section.settings .setting-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.default-section.settings .about {
+  margin-top: 15px;
+  font-size: 13px;
 }

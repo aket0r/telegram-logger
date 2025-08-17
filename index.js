@@ -87,7 +87,7 @@ function createTray() {
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 1220,
+    width: 1300,
     height: 800,
     show: true,
     // autoHideMenuBar: true,

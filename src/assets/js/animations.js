@@ -1,71 +1,76 @@
-const $  = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => r.querySelectorAll(s);
-
-function hideAllWindows() {
-  $$('.window.active').forEach(el => el.classList.remove('active'));
-}
-
-function hideSelectors(selectors = []) {
-  selectors.forEach(sel => {
-    const el = $(sel);
-    if (el) el.classList.remove('active');
-  });
-}
-
-function showSelector(selector) {
-  const el = $(selector);
-  if (el) el.classList.add('active');
-}
-
-function switchWindow({ close = [], open = null, toggle = false } = {}) {
-  if (toggle && open) {
-    const el = $(open);
-    if (el && el.classList.contains('active')) {
-      hideSelectors([open]);
-      return;
-    }
+const switchWindow = function(closedWindows = [], newWindowID) {
+  if (Array.isArray(closedWindows) && closedWindows.length > 0) {
+      closedWindows.forEach(element => {
+          let el = document.querySelector(element);
+          el.classList.remove("active");
+      });
   }
 
-  if (close === '*') hideAllWindows();
-  else if (Array.isArray(close) && close.length) hideSelectors(close);
+  if (closedWindows === '*') {
+      document.querySelectorAll('*').forEach(e => e.classList.remove('active'));
+  }
 
-  if (open) showSelector(open);
+  if (newWindowID !== null) {
+      const newWin = document.querySelector(newWindowID);
+      if (newWin.classList.contains('active')) {
+        newWin.classList.remove('active');
+      } else {
+        newWin.classList.add('active');
+      }
+  }
 }
 
-const table = $('.table-content');
-if (table) {
-  table.addEventListener('click', (e) => {
-    const btn = e.target.closest('.show-update');
-    if (!btn) return;
-    if (btn.tagName === 'A') e.preventDefault();
 
-    switchWindow({
-      close: '*',
-      open: '.update-container',
-      toggle: true,
-    });
-  });
-}
+const table = document.querySelector('.table-content');
 
-const closeUpdateBtn = $('.update-container .close-btn');
-if (closeUpdateBtn) {
-  closeUpdateBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    switchWindow({ close: ['.update-container'] });
-  });
-}
+const tableAccount = document.querySelector('.default-section.accounts .content .table-content')
 
-const accountSide = $('nav .account-side');
-if (accountSide) {
-  accountSide.addEventListener('click', (e) => {
-    const avatar = e.target.closest('.avatar');
-    if (!avatar) return;
-    e.preventDefault();
+table.addEventListener("click", function(event) {
+    event.preventDefault();
 
-    switchWindow({
-      close: '*',
-      open: 'nav .account-side .container',
-      toggle: true,
-    });
-  });
-}
+    if (event.target.classList.contains('show-update')) {
+        switchWindow('*', '.update-container');
+    }
+});
+
+tableAccount.addEventListener("click", function(event) {
+    event.preventDefault();
+    console.log(event.target);
+    if (event.target.classList.contains('show-update')) {
+        switchWindow('*', '.default-section.accounts .update-container');
+    }
+});
+
+const closeUpdateBtn = document.querySelector('.update-container .close-btn');
+closeUpdateBtn.addEventListener("click", function() {
+    switchWindow(['.update-container'], null);
+});
+
+const closeUpdateBtnAccs = document.querySelector('.default-section.accounts .update-container .close-btn');
+closeUpdateBtnAccs.addEventListener("click", function() {
+    switchWindow(['.default-section.accounts .update-container'], null);
+});
+
+
+const openUserModal = document.querySelector('nav .account-side');
+openUserModal.addEventListener("click", function(event) {
+    event.preventDefault();
+    if (event.target.className === 'avatar') {
+        switchWindow([], 'nav .account-side .container');
+    }
+});
+
+
+
+const locationsPaths = document.querySelectorAll('.default-section');
+const locationsBtn = document.querySelectorAll('.location-button');
+
+locationsBtn.forEach(location => {
+    location.addEventListener("click", function() {
+      const path = this.dataset.location;
+      locationsPaths.forEach(el => {
+        if (el.dataset.path != path) el.classList.remove('isActive');
+        else el.classList.add('isActive');
+      });
+    })
+});
