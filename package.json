@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "electron": "^37.3.0"
+  },
+  "name": "telegram-logger",
+  "description": "Program for recording and saving Telegram messages",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aket0r/telegram-logger.git"
+  },
+  "keywords": [
+    "telegram",
+    "tg",
+    "logger"
+  ],
+  "author": "aket0r",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aket0r/telegram-logger/issues"
+  },
+  "homepage": "https://github.com/aket0r/telegram-logger#readme"
+}

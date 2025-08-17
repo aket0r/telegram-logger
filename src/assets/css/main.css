@@ -1,0 +1,427 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    background-color: var(--body-background-light);
+    color: var(--body-background-light-color);
+    font-family: sans-serif;
+    font-weight: 100;
+}
+
+
+section.main {
+    width: calc(100% - 15rem - 10px);
+    margin-left: calc(15rem + 10px);
+}
+
+h1 {
+    font-weight: 100;
+}
+
+.main {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    background: #fff;
+    float: left;
+}
+
+.main header {
+    width: 100%;
+    margin-left: 0;
+}
+
+.main aside {
+    width: auto;
+    background-color: var(--left-bar-background);
+    border-right: 1px solid #ededed;
+    height: 100%;
+    text-align: start;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    min-height: 735px;
+    color: #fff;
+    margin-right: -1px;
+    position: fixed;
+    left: 0;
+}
+
+.main .stats {
+    display: flex;
+    max-width: 200px;
+    flex-wrap: wrap;
+}
+
+.main .stats .block {
+    display: block;
+    background: transparent;
+    padding: 20px 10px;
+    border: 1px solid var(--left-bar-blocks-background);
+    text-align: center;
+    font-size: 12px;
+    width: calc(100% / 2);
+}
+
+.main .stats .block h1 {
+    font-weight: 100;
+    font-size: 18px;
+}
+
+.main .stats .block h2 {
+    font-weight: 100;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.main aside .top-container .title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.main aside ul li {
+    list-style: none;
+}
+
+.main aside .top-container .title .title-text {
+    display: block;
+    margin-bottom: 30px;
+    color: #fff;
+}
+.main aside .top-container .title .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main aside .main-container ul {
+    padding: 0;
+}
+
+.main aside .main-container ul li {
+    background: var(--left-bar-background);
+    padding: 5px 10px;
+    margin: 0;
+    border-radius: 0px;
+    color: #fff;
+    height: 50px;
+    display: flex;
+    align-content: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    align-items: center;
+    min-width: 250px;
+    border-bottom: 1px solid var(--left-bar-buttons-border);
+    user-select: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.main aside .main-container ul li:first-child {
+    border-top: 1px solid var(--left-bar-buttons-border);
+}
+
+.main aside .main-container ul li:active {
+    background: #9ab7d9;
+}
+
+.main aside .main-container ul li .text {
+    margin-left: 25px;
+}
+
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #9999;
+    margin-bottom: 15px;
+}
+
+header nav .side input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    color: #777;
+    outline: none;
+    min-width: 500px;
+}
+
+header nav .side .avatar img {
+    width: 50px;
+    background: #ddd;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+
+header nav .side .account {
+    position: relative;
+    cursor: pointer;
+}
+
+header nav .side .account .container {
+    position: absolute;
+    top: 60px;
+    left: -140px;
+    background: #fff;
+    padding: 0;
+    min-width: 200px;
+    border: 1px solid #9999;
+    display: none;
+}
+
+header nav .side .account .container.active {
+    display: block;
+}
+
+header nav .side .container li {
+    list-style: none;
+    background: #fff;
+    width: 100%;
+    padding: 10px 15px;
+    cursor: pointer;
+    user-select: none;
+}
+
+header nav .side .container li i {
+    margin-right: 15px;
+}
+
+header nav .side .container li:active {
+    background-color: #eee;
+}
+
+
+.default-section {
+    padding: 15px;
+}
+
+.default-section .title {
+    color: #555;
+    font-size: 24px;
+    margin-bottom: 25px;
+}
+
+.default-section .update-container {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: #00000047;
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.default-section .update-container.active {
+    display: flex;
+}
+
+
+.default-section .update-container .close-btn {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    font-size: 30px;
+    background: #eee;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #a3a3a3;
+    border: 1px solid #fff;
+}
+
+.default-section .update-container .container {
+    width: 600px;
+    height: 550px;
+    padding: 15px;
+    background: #fff;
+    border-radius: 0;
+    border-top: 10px solid #9ab7d9;
+}
+
+.default-section .update-container .container h1 {
+    user-select: none;
+}
+
+.default-section .update-container .container h1 .userid {
+    color: skyblue;
+    text-decoration: underline;
+    user-select: none;
+}
+
+.default-section .content table {
+    border: 1px solid #9999;
+    margin-bottom: 0px;
+    border-bottom: none;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.default-section .content table.table-content {
+    border-bottom: 1px solid #9999;
+}
+
+.default-section .content table:last-child {
+    border-bottom: 1px solid #9999;
+}
+
+.default-section .content table tbody {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 0;
+    box-sizing: border-box;
+    justify-content: space-between;
+}
+
+.default-section .content table tr {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.default-section .content table tr:nth-child(2n) {
+    background-color: #f7f7f7;
+}
+
+.default-section .content table tr td {
+    display: block;
+    padding: 20px 15px;
+    width: 100%;
+    font-size: 14px;
+    user-select: none;
+}
+
+.default-section .content table tr td:last-child {
+    color: #008fc9;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.default-section .content .table-content tr td:nth-child(2) {
+    color: crimson;
+}
+
+.default-section .update-container .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 30px;
+}
+
+.default-section .update-container .form .min-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.default-section .update-container .form label {
+    display: grid;
+    width: calc(100% / 2);
+    margin-top: 10px;
+}
+
+.default-section .update-container .form label span {
+    margin-left: 5px;
+    user-select: none;
+}
+
+
+.default-section .update-container .form input {
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #9999;
+    border-radius: 0;
+    outline: none;
+    min-width: auto;
+    display: inline-block;
+    margin: 5px;
+    width: calc(100% - 10px);
+}
+
+.default-section .update-container .form textarea {
+    width: 100%;
+    height: 150px;
+    border: 1px solid #9999;
+    padding: 10px;
+    font-family: sans-serif;
+    outline: none;
+    color: #666;
+    resize: none;
+}
+
+.default-section .update-container .form select {
+    border: 1px solid #9999;
+    padding: 5px 15px;
+    margin: 5px;
+    appearance: none;
+    outline: none;
+}
+
+.default-section .update-container .form .min-container.selects {
+    width: 100%;
+}
+
+.default-section .update-container .form .min-container.selects label {
+    background-color: #bcdbff;
+    width: calc(50% - 4px);
+    margin: 0 2px;
+    padding: 10px 0;
+}
+
+.default-section .update-container .form .min-container.selects label span {
+    margin-left: 10px;
+}
+
+.default-section .update-container .actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-end;
+    margin-top: 25px;
+}
+
+.default-section .update-container .actions button {
+    border: none;
+    background: #008fc9;
+    padding: 8px 20px;
+    margin: 0 4px;
+    font-size: 18px;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+}
+
+.default-section .update-container .actions button:last-child {
+    background: #c90000;
+}
+
+
+.default-section .update-container .form select option {
+
+}

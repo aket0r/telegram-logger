@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/icons/font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/root.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <title>Telegram Logger v1.0</title>
+</head>
+<body>
+    <section class="main">
+        <header>
+            <nav>
+                <div class="side">
+                    <div class="container">
+                        <input type="text" placeholder="Search...">
+                    </div>
+                </div>
+
+                <div class="side account-side">
+                    <div class="account">
+                        <div class="avatar">
+                            <img src="assets/img/user.png" class="avatar" alt="avatar">
+                        </div>
+                        <ul class="container">
+                            <li class="default-button" data-location="#">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Add account
+                            </li>
+                            <li class="default-button" data-location="#">
+                                <i class="fa fa-refresh" aria-hidden="true"></i> Switch account
+                            </li>
+                            <li class="default-button" data-location="settings">
+                                <i class="fa fa-cog" aria-hidden="true"></i> Settings
+                            </li>
+                            <li class="default-button" data-location="#" data-isFunction="true" data-function="window.lock()">
+                                <i class="fa fa-lock" aria-hidden="true"></i> Lock
+                            </li>
+                            <li class="default-button" data-location="logout">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <main>
+            <section class="default-section" data-path="dashboard">
+                <div class="title">
+                    <h1>Dashboard</h1>
+                </div>
+
+                <div class="content">
+                    <table class="table-title">
+                        <tr>
+                            <td>ID</td>
+                            <td>UID</td>
+                            <td>Date</td>
+                            <td>Messages</td>
+                            <td>Latest update</td>
+                            <td></td>
+                        </tr>
+                    </table>
+
+                    <table class="table-content">
+                        <tr>
+                            <td>#1</td>
+                            <td>@test</td>
+                            <td>17.08.2025, 17:25:43</td>
+                            <td>100</td>
+                            <td>17.08.2025, 17:25:43</td>
+                            <td class="show-update">Update</td>
+                        </tr>
+                    </table>
+
+                    <div class="update-container">
+                        <div class="close-btn">
+                            &times;
+                        </div>
+                        <div class="container">
+                            <h1>Update <span class="userid">@test</span></h1>
+                            <div class="form">
+                                <div class="min-container">
+                                    <label>
+                                        <span>Phone number</span>
+                                        <input type="text" class="phone-number" placeholder="+7xxxxxxxx" id="upd-phone-number">
+                                    </label>
+                                    <label>
+                                        <span>User ID</span>
+                                        <input type="text" class="userid" placeholder="@test" id="upd-userid">
+                                    </label>
+                                    <label>
+                                        <span>Tag</span>
+                                        <input type="text" class="tag" placeholder="#important" id="upd-usertag">
+                                    </label>
+                                    <label>
+                                        <span>Nickname</span>
+                                        <input type="text" class="nickname" placeholder="user" id="upd-nickname">
+                                    </label>
+                                </div>
+                                <div class="min-container selects">
+                                    <label>
+                                        <span>Type</span>
+                                        <select name="upd-type" id="upd-type">
+                                            <option value="bot">Bot</option>
+                                            <option value="user">User</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>This user is blocked?</span>
+                                        <select name="upd-blocked" id="upd-blocked">
+                                            <option value="blocked">Yes</option>
+                                            <option value="not-blocked">No</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <textarea id="about" placeholder="about..."></textarea>
+                            </div>
+                            <div class="actions">
+                                <button id="upd-save">Save</button>
+                                <button id="upd-delete">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+    </main>
+        </header>
+
+        <aside class="aside-bar">
+            <div class="top-container">
+                <div class="title">
+                    <h1>
+                        <span class="icon">
+                            <img src="assets/img/icon.png" width="100" alt="icon">
+                        </span>
+                        <span class="title-text">
+                            Telegram Logger v1.0
+                        </span>
+                    </h1>
+                    <ul>
+                        <li>
+                            by <span class="colored" data-color="crimson">aket0r</span>
+                        </li>
+                        <li>
+                            Latest update <span class="colored" data-color="crimson">17.08.2025</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="block users-block">
+                    <h2 class="title">Users</h2>
+                    <h1 class="count">0</h1>
+                </div>
+                <div class="block users-block">
+                    <h2 class="title">Logs</h2>
+                    <h1 class="count">0</h1>
+                </div>
+                <div class="block users-block">
+                    <h2 class="title">Storage</h2>
+                    <h1 class="count">0</h1>
+                </div>
+                <div class="block users-block">
+                    <h2 class="title">Accounts</h2>
+                    <h1 class="count">0</h1>
+                </div>
+            </div>
+
+            <div class="main-container">
+                <ul>
+                    <li class="default-button location-button" data-location="dashboard">
+                        <span class="ico"><i class="fa fa-home" aria-hidden="true"></i></span>
+                        <span class="text">Dashboard</span>
+                    </li>
+                    <li class="default-button location-button" data-location="accounts">
+                        <span class="ico"><i class="fa fa-users" aria-hidden="true"></i></span>
+                        <span class="text">Accounts</span>
+                    </li>
+                    <li class="default-button location-button" data-location="settings">
+                        <span class="ico"><i class="fa fa-cogs" aria-hidden="true"></i></span>
+                        <span class="text">Settings</span>
+                    </li>
+                    <li class="default-button location-button" data-location="logs">
+                        <span class="ico"><i class="fa fa-file-text-o" aria-hidden="true"></i></span>
+                        <span class="text">Logs</span>
+                    </li>
+                    <li class="default-button location-button" data-location="terminal">
+                        <span class="ico"><i class="fa fa-terminal" aria-hidden="true"></i></span>
+                        <span class="text">Terminal</span>
+                    </li>
+                    <li class="default-button location-button" data-location="backup">
+                        <span class="ico"><i class="fa fa-archive" aria-hidden="true"></i></span>
+                        <span class="text">Backup</span>
+                    </li>
+                    <li class="default-button location-button" data-location="file-manager">
+                        <span class="ico"><i class="fa fa-hdd-o" aria-hidden="true"></i></span>
+                        <span class="text">File Manager</span>
+                    </li>
+                </ul> 
+            </div>
+        </aside>
+    </section>
+    <script src="assets/js/animations.js"></script>
+</body>
+</html>
