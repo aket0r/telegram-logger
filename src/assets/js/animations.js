@@ -35,7 +35,6 @@ table.addEventListener("click", function(event) {
 
 tableAccount.addEventListener("click", function(event) {
     event.preventDefault();
-    console.log(event.target);
     if (event.target.classList.contains('show-update')) {
         switchWindow('*', '.default-section.accounts .update-container');
     }
@@ -60,7 +59,25 @@ openUserModal.addEventListener("click", function(event) {
     }
 });
 
+const createNewUsrBtn = document.querySelector("#add-new-user");
+createNewUsrBtn.addEventListener("click", function() {
+  switchWindow([], '.create-new-user-window');
+});
 
+const createNewAccBtn = document.querySelector("#add-new-account");
+createNewAccBtn.addEventListener("click", function() {
+  switchWindow([], '.create-account-win');
+});
+
+const closeNewUsrWin = document.querySelector(".create-new-user-window .close-btn");
+closeNewUsrWin.addEventListener("click", function() {
+  switchWindow(['.default-section.dashboard .create-new-user-window'], null);
+});
+
+const closeNewAccWin = document.querySelector(".create-account-win .close-btn");
+closeNewAccWin.addEventListener("click", function() {
+  switchWindow(['.default-section.accounts .create-account-win'], null);
+});
 
 const locationsPaths = document.querySelectorAll('.default-section');
 const locationsBtn = document.querySelectorAll('.location-button');

@@ -6,8 +6,8 @@
 
 
 body {
-    background-color: var(--body-background-light);
-    color: var(--body-background-light-color);
+    background-color: #222;
+    color: #fff;
     font-family: sans-serif;
     font-weight: 100;
 }
@@ -34,8 +34,9 @@ h1 {
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
-    background: #fff;
+    background: #222222;
     float: left;
+    color: #fff;
 }
 
 .main header {
@@ -45,8 +46,8 @@ h1 {
 
 .main aside {
     width: auto;
-    background-color: var(--left-bar-background);
-    border-right: 1px solid #ededed;
+    background-color: #222;
+    border-right: 1px solid #333;
     height: 100%;
     text-align: start;
     display: flex;
@@ -60,6 +61,10 @@ h1 {
     left: 0;
 }
 
+.main aside > * {
+    user-select: none;
+}
+
 .main .stats {
     display: flex;
     max-width: 200px;
@@ -70,7 +75,7 @@ h1 {
     display: block;
     background: transparent;
     padding: 20px 10px;
-    border: 1px solid var(--left-bar-blocks-background);
+    border: 1px solid #333;
     text-align: center;
     font-size: 12px;
     width: calc(100% / 2);
@@ -114,7 +119,7 @@ h1 {
 }
 
 .main aside .main-container ul li {
-    background: var(--left-bar-background);
+    background: #222;
     padding: 5px 10px;
     margin: 0;
     border-radius: 0px;
@@ -126,18 +131,18 @@ h1 {
     flex-direction: row;
     align-items: center;
     min-width: 250px;
-    border-bottom: 1px solid var(--left-bar-buttons-border);
+    border-bottom: 1px solid #333;
     user-select: none;
     cursor: pointer;
     font-size: 20px;
 }
 
 .main aside .main-container ul li:first-child {
-    border-top: 1px solid var(--left-bar-buttons-border);
+    border-top: 1px solid #333;
 }
 
 .main aside .main-container ul li:active {
-    background: #9ab7d9;
+    background: #313131;
 }
 
 .main aside .main-container ul li .text {
@@ -155,10 +160,11 @@ header nav {
 
 header nav .side input {
     padding: 10px 15px;
-    border: 1px solid #ddd;
-    color: #777;
+    border: 1px solid #dddddd87;
+    color: #ddd;
     outline: none;
     min-width: 500px;
+    background: transparent;
 }
 
 header nav .side .avatar img {
@@ -205,7 +211,7 @@ header nav .side .container li i {
 }
 
 header nav .side .container li:active {
-    background-color: #eeeeee73;
+    background-color: #10101073;
 }
 
 
@@ -214,12 +220,15 @@ header nav .side .container li:active {
 }
 
 .default-section .title {
-    color: #555;
+    color: #fff;
     font-size: 24px;
     margin-bottom: 25px;
+    user-select: none;
 }
 
-.default-section .update-container {
+.default-section .update-container,
+.default-section .create-new-user-window,
+.default-section.accounts .create-account-win {
     display: none;
     justify-content: center;
     align-items: center;
@@ -231,17 +240,24 @@ header nav .side .container li:active {
     top: 0;
     left: 0;
 }
-.default-section .update-container.active {
+
+
+.default-section .update-container.active,
+.default-section .create-new-user-window.active,
+.default-section.accounts .create-account-win.active {
     display: flex;
+    backdrop-filter: blur(5px);
 }
 
 
-.default-section .update-container .close-btn {
+.default-section .update-container .close-btn,
+.default-section .create-new-user-window .close-btn,
+.default-section.accounts .create-account-win .close-btn {
     position: absolute;
     top: 5%;
     right: 5%;
     font-size: 30px;
-    background: #eee;
+    background: #111;
     width: 50px;
     height: 50px;
     display: flex;
@@ -250,25 +266,32 @@ header nav .side .container li:active {
     user-select: none;
     border-radius: 50%;
     cursor: pointer;
-    color: #a3a3a3;
-    border: 1px solid #fff;
+    color: #fff;
+    border: none;
+    box-shadow: 0 0 20px #111;
 }
 
-.default-section .update-container .container {
-    width: 600px;
-    height: 550px;
+.default-section .update-container .container,
+.default-section .create-new-user-window .container,
+.default-section.accounts .create-account-win .container {
+    width: 700px;
+    height: 580px;
     padding: 15px;
-    background: #fff;
-    border-radius: 0;
-    border-top: 10px solid #9ab7d9;
+    background: #222;
+    border-radius: 10px;
+    border-top: 10px solid #333;
 }
 
-.default-section .update-container .container h1 {
+.default-section .update-container .container h1,
+.default-section .create-new-user-window .container h1,
+.default-section.accounts .create-account-win .container h1 {
     user-select: none;
 }
 
-.default-section .update-container .container h1 .userid {
-    color: skyblue;
+.default-section .update-container .container h1 .userid,
+.default-section .create-new-user-window .container h1 .userid,
+.default-section.accounts .create-account-win .container h1 .userid {
+    color: #0090cb;
     text-decoration: underline;
     user-select: none;
 }
@@ -283,7 +306,7 @@ header nav .side .container li:active {
 }
 
 .default-section .content table {
-    table-layout: fixed;       /* фиксированная раскладка */
+    table-layout: fixed;       /* Ã‘â€žÃÂ¸ÃÂºÃ‘ÂÃÂ¸Ã‘â‚¬ÃÂ¾ÃÂ²ÃÂ°ÃÂ½ÃÂ½ÃÂ°Ã‘Â Ã‘â‚¬ÃÂ°Ã‘ÂÃÂºÃÂ»ÃÂ°ÃÂ´ÃÂºÃÂ° */
     width: 100%;
     border-collapse: collapse;
 }
@@ -335,8 +358,7 @@ header nav .side .container li:active {
 }
 
 
-.default-section .content .table-content tr td:nth-child(2),
-.default-section .content .table-content tr td:nth-child(3) {
+.default-section .content .table-content tr td:nth-child(2) {
     color: crimson;
     overflow: hidden;
     white-space: nowrap;
@@ -362,7 +384,9 @@ header nav .side .container li:active {
 }
 
 
-.default-section .update-container .form {
+.default-section .update-container .form,
+.default-section .create-new-user-window .form,
+.default-section.accounts .create-account-win .form {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -370,7 +394,9 @@ header nav .side .container li:active {
     margin-top: 30px;
 }
 
-.default-section .update-container .form .min-container {
+.default-section .update-container .form .min-container,
+.default-section .create-new-user-window .form .min-container,
+.default-section.accounts .create-account-win .min-container {
     display: flex;
     flex-wrap: wrap;
     align-content: center;
@@ -380,65 +406,90 @@ header nav .side .container li:active {
     margin-bottom: 20px;
 }
 
-.default-section .update-container .form label {
+.default-section .update-container .form label,
+.default-section .create-new-user-window .form label,
+.default-section.accounts .create-account-win .form label {
     display: grid;
     width: calc(100% / 2);
     margin-top: 10px;
 }
 
-.default-section .update-container .form label span {
+.default-section .update-container .form label span,
+.default-section .create-new-user-window .form label span,
+.default-section.accounts .create-account-win .form label span {
     margin-left: 5px;
     user-select: none;
 }
 
 
-.default-section .update-container .form input {
-    padding: 5px;
+.default-section .update-container .form input,
+.default-section .create-new-user-window .form input,
+.default-section.accounts .create-account-win .form input {
+    padding: 10px;
     font-size: 16px;
     border: 1px solid #9999;
-    border-radius: 0;
+    border-radius: 5px;
     outline: none;
     min-width: auto;
     display: inline-block;
     margin: 5px;
     width: calc(100% - 10px);
+    background: transparent;
+    color: #fff;
 }
 
-.default-section .update-container .form textarea {
+.default-section .update-container .form textarea,
+.default-section .create-new-user-window .form textarea,
+.default-section.accounts .create-account-win .form textarea {
     width: 100%;
     height: 150px;
-    border: 1px solid #9999;
+    border: 1px solid #333;
     padding: 10px;
     font-family: sans-serif;
     outline: none;
-    color: #666;
+    color: #fff;
     resize: none;
+    background: #222;
+    border-radius: 5px;
 }
 
-.default-section .update-container .form select {
+.default-section .update-container .form select,
+.default-section .create-new-user-window .form select,
+.default-section.accounts .create-account-win .form select {
     border: 1px solid #9999;
     padding: 5px 15px;
     margin: 5px;
     appearance: none;
     outline: none;
+    background: #222;
+    color: #fff;
 }
 
-.default-section .update-container .form .min-container.selects {
+.default-section .update-container .form .min-container.selects,
+.default-section .create-new-user-window .form .min-container.selects,
+.default-section.accounts .create-account-win .form .min-container.selects {
     width: 100%;
 }
 
-.default-section .update-container .form .min-container.selects label {
-    background-color: #bcdbff;
+.default-section .update-container .form .min-container.selects label,
+.default-section .create-new-user-window .form .min-container.selects label,
+.default-section.accounts .create-account-win .form .min-container.selects label {
+    background-color: #333;
     width: calc(50% - 4px);
     margin: 0 2px;
-    padding: 10px 0;
+    padding: 10px 10px;
+    border-radius: 5px;
 }
 
-.default-section .update-container .form .min-container.selects label span {
+.default-section .update-container .form .min-container.selects label span,
+.default-section .create-new-user-window .form .min-container.selects label span,
+.default-section.accounts .create-account-win .form .min-container.selects label span {
     margin-left: 10px;
 }
 
-.default-section .update-container .actions {
+.default-section .update-container .actions,
+.default-section .create-new-user-window .actions,
+.default-section.accounts .create-account-win .actions {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -447,9 +498,11 @@ header nav .side .container li:active {
     margin-top: 25px;
 }
 
-.default-section .update-container .actions button {
+.default-section .update-container .actions button,
+.default-section .create-new-user-window .actions button,
+.default-section.accounts .create-account-win .actions button {
     border: none;
-    background: #008fc9;
+    background: #003e57;
     padding: 8px 20px;
     margin: 0 4px;
     font-size: 18px;
@@ -461,20 +514,17 @@ header nav .side .container li:active {
 }
 
 .default-section .update-container .actions button:last-child {
-    background: #c90000;
+    background: #670000;
 }
 
 
-.default-section .update-container .form select option {
 
-}
-
-
-.default-section #add-new-account {
+.default-section #add-new-account,
+.default-section #add-new-user {
     display: flex;
     position: relative;
-    left: 90%;
-    width: 100px;
+    left: calc(90% - 30px);
+    width: 130px;
     padding: 10px;
     background: royalblue;
     color: #fff;
@@ -505,10 +555,11 @@ header nav .side .container li:active {
 }
 
 .default-section.logs .logs-output {
-    background: #ddd;
+    background: #111;
     overflow-y: auto;
     max-height: 540px;
-} 
+    padding: 5px;
+}
 
 
 .default-section.terminal .terminal .output {
@@ -566,7 +617,7 @@ header nav .side .container li:active {
 .default-section.backup .backup-container {
     display: flex;
     width: 100%;
-    background: #fff;
+    background: #222;
     padding: 20px;
     justify-content: center;
     align-items: center;
@@ -577,6 +628,7 @@ header nav .side .container li:active {
 
 .default-section.backup .backup-container h1 {
     font-size: 24px;
+    user-select: none;
 }
 
 .default-section.backup .backup-container button {
@@ -589,6 +641,10 @@ header nav .side .container li:active {
     border-radius: 8px;
     cursor: pointer;
     user-select: none;
+}
+
+.default-section.backup .backup-container button:active {
+    background: rgb(47 78 171);
 }
 
 .default-section.backup .backup-container button i {
@@ -637,22 +693,26 @@ header nav .side .container li:active {
 }
 
 .default-section.settings .settings-block button {
-    background: #fff;
-    border: 1px solid #9999;
+    background: #111;
+    border: 1px solid #111;
     padding: 10px 15px;
     cursor: pointer;
     user-select: none;
     display: block;
     min-width: 220px;
     margin: 15px 0;
+    color: #fff;
+    border-radius: 5px;
 }
 
 .default-section.settings .settings-block button:hover {
-    background-color: #dce0ffee;
+    background-color: #333;
+    border-color: #222;
 }
 
 .default-section.settings .settings-block button:active {
-    background-color: #a8b2ffee;
+    background-color: #444;
+    border-color: #444;
 }
 
 .default-section.settings .settings-block h2 {
@@ -671,43 +731,44 @@ header nav .side .container li:active {
     margin: 15px 0;
 }
 
-/* сам переключатель */
+/* Ã‘ÂÃÂ°ÃÂ¼ ÃÂ¿ÃÂµÃ‘â‚¬ÃÂµÃÂºÃÂ»Ã‘Å½Ã‘â€¡ÃÂ°Ã‘â€šÃÂµÃÂ»Ã‘Å’ */
 .default-section.settings .setting-item .switcher {
-  position: relative;          /* важно для ::before */
-  width: 40px;
-  height: 25px;
+  position: relative;          /* ÃÂ²ÃÂ°ÃÂ¶ÃÂ½ÃÂ¾ ÃÂ´ÃÂ»Ã‘Â ::before */
+  width: 60px;
+  height: 30px;
   border-radius: 14px;
   background: #878787ee;
   transition: background .2s;
+  cursor: pointer;
 }
 
-/* бегунок */
+/* ÃÂ±ÃÂµÃÂ³Ã‘Æ’ÃÂ½ÃÂ¾ÃÂº */
 .default-section.settings .setting-item .switcher::before {
   content: '';
   position: absolute;
   left: 2px;
   top: 2px;
-  width: 21px;
-  height: 21px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: #fff;
   transition: transform .2s;
 }
 
-/* скрываем стандартный чекбокс (по желанию) */
+/* Ã‘ÂÃÂºÃ‘â‚¬Ã‘â€¹ÃÂ²ÃÂ°ÃÂµÃÂ¼ Ã‘ÂÃ‘â€šÃÂ°ÃÂ½ÃÂ´ÃÂ°Ã‘â‚¬Ã‘â€šÃÂ½Ã‘â€¹ÃÂ¹ Ã‘â€¡ÃÂµÃÂºÃÂ±ÃÂ¾ÃÂºÃ‘Â (ÃÂ¿ÃÂ¾ ÃÂ¶ÃÂµÃÂ»ÃÂ°ÃÂ½ÃÂ¸Ã‘Å½) */
 .default-section.settings .setting-item input[type="checkbox"] {
   appearance: none;
   position: absolute;
   opacity: 0;
 }
 
-/* КЛЮЧ: селектор соседства с .switcher, а не полный путь */
+/* ÃÅ¡Ãâ€ºÃÂ®ÃÂ§: Ã‘ÂÃÂµÃÂ»ÃÂµÃÂºÃ‘â€šÃÂ¾Ã‘â‚¬ Ã‘ÂÃÂ¾Ã‘ÂÃÂµÃÂ´Ã‘ÂÃ‘â€šÃÂ²ÃÂ° Ã‘Â .switcher, ÃÂ° ÃÂ½ÃÂµ ÃÂ¿ÃÂ¾ÃÂ»ÃÂ½Ã‘â€¹ÃÂ¹ ÃÂ¿Ã‘Æ’Ã‘â€šÃ‘Å’ */
 .default-section.settings .setting-item input:checked + .switcher {
-  background: crimson; /* твой цвет */
+  background: rgb(73, 118, 255); /* Ã‘â€šÃÂ²ÃÂ¾ÃÂ¹ Ã‘â€ ÃÂ²ÃÂµÃ‘â€š */
 }
 
 .default-section.settings .setting-item input:checked + .switcher::before {
-  transform: translateX(15px);
+  transform: translateX(30px);
 }
 
 
@@ -716,6 +777,7 @@ header nav .side .container li:active {
 .default-section.settings .setting-item select {
   margin-left: auto;
   outline: none;
+  appearance: none;
 }
 
 .default-section.settings .setting-item input[type="checkbox"] {
@@ -723,19 +785,27 @@ header nav .side .container li:active {
 }
 
 .default-section.settings .setting-item input[type="number"] {
-    padding: 5px;
+    padding: 10px 15px;
     width: 130px !important;
-    border: 1px solid #9999;
-    border-radius: 0;
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+    font-size: 19px;
+    border-radius: 5px;
+    appearance: none;
 }
 
 .default-section.settings .setting-item select {
     margin-left: auto;
-    padding: 5px 15px;
-    border: 1px solid #9999;
+    padding: 10px 15px;
+    border: 1px solid #222;
     appearance: none;
-    width: 100px;
+    width: 170px;
     text-align: center;
+    background: #000;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 19px;
 }
 
 .default-section.settings .setting-buttons {
@@ -746,6 +816,20 @@ header nav .side .container li:active {
 }
 
 .default-section.settings .about {
-  margin-top: 15px;
   font-size: 13px;
+  text-align: start;
+  margin-top: 4rem;
+  color: #fff;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  align-content: space-between;
+}
+
+
+.about a {
+    color: slateblue;
+    text-decoration: none;
 }

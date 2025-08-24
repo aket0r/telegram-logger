@@ -24,7 +24,7 @@
                             <img src="assets/img/user.png" class="avatar" alt="avatar">
                         </div>
                         <ul class="container">
-                            <li class="default-button" data-location="#">
+                            <li class="default-button add-account" data-location="#">
                                 <i class="fa fa-plus" aria-hidden="true"></i> Add account
                             </li>
                             <li class="default-button" data-location="#">
@@ -48,10 +48,60 @@
             <section class="default-section dashboard isActive" data-path="dashboard">
                 <div class="title">
                     <h1>Dashboard</h1>
-                    <button id="add-new-account">
+                    <button id="add-new-user">
                         <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
                         <span class="text">New user</span>
                     </button>
+                </div>
+
+                <div class="create-new-user-window">
+                    <div class="close-btn">
+                            &times;
+                    </div>
+
+                    <div class="container">
+                        <h1>Create new user</h1>
+                            <div class="form">
+                                <div class="min-container">
+                                    <label>
+                                        <span>Phone number</span>
+                                        <input type="text" class="phone-number" placeholder="+7xxxxxxxx" id="upd-phone-number">
+                                    </label>
+                                    <label>
+                                        <span>User ID</span>
+                                        <input type="text" class="userid" placeholder="@test" id="upd-userid">
+                                    </label>
+                                    <label>
+                                        <span>Tag</span>
+                                        <input type="text" class="tag" placeholder="#important" id="upd-usertag">
+                                    </label>
+                                    <label>
+                                        <span>Nickname</span>
+                                        <input type="text" class="nickname" placeholder="user" id="upd-nickname">
+                                    </label>
+                                </div>
+                                <div class="min-container selects">
+                                    <label>
+                                        <span>Type</span>
+                                        <select name="upd-type" id="upd-type">
+                                            <option value="bot">Bot</option>
+                                            <option selected value="user">User</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>This user is blocked?</span>
+                                        <select name="upd-blocked" id="upd-blocked">
+                                            <option value="blocked">Yes</option>
+                                            <option selected value="not-blocked">No</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <textarea id="about" placeholder="about..."></textarea>
+                            </div>
+                            <div class="actions">
+                                <button id="upd-save">Create</button>
+                            </div>
+                    </div>
                 </div>
 
                 <div class="content">
@@ -139,7 +189,7 @@
                     <h1>Accounts</h1>
                     <button id="add-new-account">
                         <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                        <span class="text">New user</span>
+                        <span class="text">New account</span>
                     </button>
             </div>
 
@@ -169,6 +219,55 @@
                             <td class="show-update">UPDATE</td>
                         </tr>
                 </table>
+
+                <div class="create-account-win">
+                        <div class="close-btn">
+                            &times;
+                        </div>
+                        <div class="container">
+                            <h1>Create new account</h1>
+                            <div class="form">
+                                <div class="min-container">
+                                    <label>
+                                        <span>Phone number</span>
+                                        <input type="text" class="phone-number" placeholder="+7xxxxxxxx" id="upd-phone-number">
+                                    </label>
+                                    <label>
+                                        <span>API_ID</span>
+                                        <input type="text" class="API_ID" placeholder="API_ID" id="upd-API_ID">
+                                    </label>
+                                    <label>
+                                        <span>API_HASH</span>
+                                        <input type="text" class="API_HASH" placeholder="API_HASH" id="upd-API_HASH">
+                                    </label>
+                                    <label>
+                                        <span>SESSION_FILE</span>
+                                        <input type="file" class="SESSION_FILE" id="upd-SESSION_FILE">
+                                    </label>
+                                </div>
+                                <div class="min-container selects">
+                                    <label>
+                                        <span>Type</span>
+                                        <select name="upd-type" id="upd-type">
+                                            <option value="active">Active</option>
+                                            <option value="in_active">Not active</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>Status</span>
+                                        <select name="upd-status" id="upd-status">
+                                            <option value="banned">banned</option>
+                                            <option selected value="safe">safe</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <textarea id="about" placeholder="about..."></textarea>
+                            </div>
+                            <div class="actions">
+                                <button id="upd-save">Create</button>
+                            </div>
+                        </div>
+                    </div>
 
                 <div class="update-container">
                         <div class="close-btn">
@@ -226,17 +325,10 @@
             <div class="title">
                     <h1>Settings</h1>
             </div>
-            
+
             <div class="content">
                 <div class="settings-block">
                 <h2>General</h2>
-                <label class="setting-item">
-                    Theme:
-                    <select>
-                        <option selected>Light</option>
-                        <option>Dark</option>
-                    </select>
-                </label>
                 <label class="setting-item">
                     Language:
                     <select>
@@ -656,7 +748,7 @@
                         <span class="ico"><i class="fa fa-hdd-o" aria-hidden="true"></i></span>
                         <span class="text">File Manager</span>
                     </li>
-                </ul> 
+                </ul>
             </div>
         </aside>
     </section>
