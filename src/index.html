@@ -17,11 +17,11 @@
                 <div class="stats">
                     <div class="block users-block">
                         <h2 class="title" data-i18n="stats.users">Users</h2>
-                        <h1 class="count">1</h1>
+                        <h1 class="count">0</h1>
                     </div>
                     <div class="block users-block">
                         <h2 class="title" data-i18n="stats.accounts">Accounts</h2>
-                        <h1 class="count">1</h1>
+                        <h1 class="count">0</h1>
                     </div>
                     <div class="block users-block">
                         <h2 class="title" data-i18n="stats.logs">Logs</h2>
@@ -70,7 +70,7 @@
                 <section class="default-section dashboard isActive" data-path="dashboard">
                     <div class="title">
                         <h1 data-i18n="dashboard.title">Dashboard</h1>
-                        <button id="add-new-user">
+                        <button class="hidden" id="add-new-user">
                             <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
                             <span class="text" data-i18n="dashboard.new_user">New user</span>
                         </button>
@@ -135,8 +135,8 @@
                             <tr>
                                 <td data-i18n="table.id">ID</td>
                                 <td data-i18n="table.uid">UID</td>
-                                <td data-i18n="table.nickname">Nickname</td>
-                                <td data-i18n="table.tag">Tag</td>
+                                <td data-i18n="table.username">Nickname</td>
+                                <td data-i18n="table.nickname">Type</td>
                                 <td data-i18n="table.date">Date</td>
                                 <td data-i18n="table.messages">Messages</td>
                                 <td data-i18n="table.latest_update">Latest update</td>
@@ -145,16 +145,7 @@
                         </table>
 
                         <table class="table-content">
-                            <tr>
-                                <td>#1</td>
-                                <td>@test</td>
-                                <td>chappie</td>
-                                <td>BOT</td>
-                                <td>17.08.2025, 17:25:43</td>
-                                <td>100</td>
-                                <td>17.08.2025, 17:25:43</td>
-                                <td class="show-update" data-i18n="dashboard.update">Update</td>
-                            </tr>
+                            <tbody></tbody>
                         </table>
 
                         <div class="update-container">
@@ -173,7 +164,7 @@
                                         </label>
                                         <label>
                                             <span data-i18n="dashboard.fields.user_id">User ID</span>
-                                            <input type="text" class="userid" placeholder="@test" id="upd-userid">
+                                            <input type="text" class="usr-title" placeholder="@test" id="upd-userid">
                                         </label>
                                         <label>
                                             <span data-i18n="dashboard.fields.tag">Tag</span>
@@ -218,7 +209,7 @@
                 <section class="default-section accounts" data-path="accounts">
                     <div class="title">
                         <h1 data-i18n="accounts.title">Accounts</h1>
-                        <button id="add-new-account">
+                        <button class="hidden" id="add-new-account">
                             <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
                             <span class="text" data-i18n="accounts.new_account">New account</span>
                         </button>
@@ -232,7 +223,7 @@
                                 <td data-i18n="table.api_hash">API_HASH</td>
                                 <td data-i18n="table.phone">Phone</td>
                                 <td data-i18n="table.session_file">SESSION_FILE</td>
-                                <td data-i18n="table.date">Date</td>
+                                <td data-i18n="table.date">Logged in</td>
                                 <td data-i18n="table.banned">Banned</td>
                                 <td></td>
                             </tr>
@@ -240,16 +231,16 @@
 
                         <table class="table-content">
                             <tr>
-                                <td class="id">#1</td>
-                                <td title="z1UA3iLqw4TI2BscfTxktxwPIFgCaj4PBVET5e0SzIJkEQ59fWMeKZOe50x7rsuM">
-                                    z1UA3iLqw4TI2BscfTxktxwPIFgCaj4PBVET5e0SzIJkEQ59fWMeKZOe50x7rsuM</td>
-                                <td title="6i6wmkXsAPm1j2vAU5mAzM1tgsWlkAPxyZ4M0W6hUw9M9RHgMVwhgoPRPc81zFDH">
-                                    6i6wmkXsAPm1j2vAU5mAzM1tgsWlkAPxyZ4M0W6hUw9M9RHgMVwhgoPRPc81zFDH</td>
-                                <td>+76574826798</td>
-                                <td>.tg_session</td>
-                                <td>17.08.2025, 14:44:32</td>
-                                <td>No</td>
-                                <td class="show-update">UPDATE</td>
+                                <td class="index">#1</td>
+                                <td class="api_id" title="">
+                                </td>
+                                <td class="api_hash" title="">
+                                </td>
+                                <td class="phone_number"></td>
+                                <td class="tg_session">-</td>
+                                <td class="logged_in">-</td>
+                                <td class="isBanned">No</td>
+                                <td class="show-update hidden-easy" data-i18n="table.update_btn">UPDATE</td>
                             </tr>
                         </table>
 
@@ -383,7 +374,12 @@
                             </label>
                             <label class="setting-item">
                                 <span data-i18n="settings.minimize_to_tray">Minimize to tray on close</span>
-                                <input type="checkbox">
+                                <input type="checkbox" disabled checked>
+                                <span class="switcher"></span>
+                            </label>
+                            <label class="setting-item animated-bg">
+                                <span data-i18n="settings.animated_bg">Animated background</span>
+                                <input class="animated-bg" type="checkbox">
                                 <span class="switcher"></span>
                             </label>
                         </div>
@@ -426,14 +422,6 @@
                                 <span data-i18n="settings.show_popup">Show popup notifications</span>
                                 <input type="checkbox">
                                 <span class="switcher"></span>
-                            </label>
-                            <label class="setting-item">
-                                <strong data-i18n="settings.filters">Filters:</strong>
-                                <select>
-                                    <option data-i18n="settings.filters_all">All messages</option>
-                                    <option data-i18n="settings.filters_mentions">Only mentions</option>
-                                    <option data-i18n="settings.filters_specific">Specific chats</option>
-                                </select>
                             </label>
                         </div>
 
@@ -484,152 +472,8 @@
                     </div>
 
                     <div class="content">
-                        <div class="logs-output">
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                            <div class="logs-item">
-                                <span class="date">[17.08.2025, 22:18:38]</span>
-                                <span class="text">User logged in...</span>
-                            </div>
-                        </div>
+
+                        <div class="logs-output" id="logs-list" class="logs"></div>
                     </div>
                 </section>
 
@@ -751,6 +595,12 @@
                         <span class="messages-counter">Messages: <span class="msg-counter">0</span></span>
                     </div>
                     <div class="messages"></div>
+                    <div class="output hidden">
+                        <div class="close-btn">
+                            &times;
+                        </div>
+                        <div class="asset"></div>
+                    </div>
                 </section>
 
             </main>
@@ -832,6 +682,7 @@
     <script src="assets/js/animations.js"></script>
     <script src="assets/js/backend/files.js"></script>
     <script src="assets/js/backend/i18n.js"></script>
+    <script src="assets/js/backend/logs.js"></script>
 </body>
 
 </html>

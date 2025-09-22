@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Telegram Logger — Авторизация</title>
+    <style>
+        body {
+            font: 14px/1.4 system-ui, sans-serif;
+            background: #111;
+            color: #eee;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .card {
+            width: 360px;
+            background: #1c1c1c;
+            padding: 16px;
+            border-radius: 10px;
+            box-shadow: 0 0 0 1px #2a2a2a inset
+        }
+
+        h3 {
+            margin: 0 0 10px
+        }
+
+        label {
+            display: block;
+            margin: 8px 0 6px
+        }
+
+        input {
+            width: 95%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #151515;
+            color: #fff
+        }
+
+        button {
+            margin-top: 10px;
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #222;
+            color: #fff;
+            cursor: pointer
+        }
+
+        .hidden {
+            display: none
+        }
+
+        .log {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #bbb;
+            white-space: pre-wrap;
+            max-height: 160px;
+            overflow: auto
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h3 id="title">Вход в Telegram</h3>
+
+        <div id="step-phone">
+            <label>Телефон</label>
+            <input id="phone" placeholder="+79998887766" />
+            <button id="btn-phone">Далее</button>
+        </div>
+
+        <div id="step-code" class="hidden">
+            <label>Код из Telegram</label>
+            <input id="code" placeholder="12345" />
+            <button id="btn-code">Подтвердить</button>
+        </div>
+
+        <div id="step-pass" class="hidden">
+            <label>Пароль 2FA</label>
+            <input id="pass" type="password" placeholder="Пароль (если включён)" />
+            <button id="btn-pass">Войти</button>
+        </div>
+
+        <div id="done" class="hidden">✅ Готово! Авторизация успешна.</div>
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        // nodeIntegration:true (как у тебя), поэтому можно:
+        const { ipcRenderer } = require('electron');
+
+        const logEl = document.getElementById('log');
+        const stepPhone = document.getElementById('step-phone');
+        const stepCode = document.getElementById('step-code');
+        const stepPass = document.getElementById('step-pass');
+        const doneBox = document.getElementById('done');
+
+        function log(msg) { logEl.textContent += (logEl.textContent ? '\n' : '') + msg; }
+        function showStage(stage, preset) {
+            stepPhone.classList.toggle('hidden', stage !== 'phone');
+            stepCode.classList.toggle('hidden', stage !== 'code');
+            stepPass.classList.toggle('hidden', stage !== 'password');
+            doneBox.classList.add('hidden');
+            if (stage === 'phone' && preset) document.getElementById('phone').value = preset;
+        }
+
+        // события от main/telegram.js
+        ipcRenderer.on('auth:stage', (_e, { stage, preset }) => { log('Требуется: ' + stage); showStage(stage, preset); });
+        ipcRenderer.on('auth:error', (_e, { message }) => { log('Ошибка: ' + message); alert('Ошибка: ' + message); });
+        ipcRenderer.on('auth:done', () => {
+            showStage(null);
+            doneBox.classList.remove('hidden');
+            log('Авторизация завершена');
+            // просим main загрузить основной UI
+            ipcRenderer.send('auth:load-main');
+        });
+
+        // отправка значений
+        document.getElementById('btn-phone').onclick = () => {
+            const v = document.getElementById('phone').value.trim();
+            if (!v) return alert('Введите телефон');
+            ipcRenderer.send('auth:phone', { value: v });
+            log('Телефон отправлен');
+        };
+        document.getElementById('btn-code').onclick = () => {
+            const v = document.getElementById('code').value.trim();
+            if (!v) return alert('Введите код');
+            ipcRenderer.send('auth:code', { value: v });
+            log('Код отправлен');
+        };
+        document.getElementById('btn-pass').onclick = () => {
+            const v = document.getElementById('pass').value;
+            ipcRenderer.send('auth:password', { value: v });
+            log('Пароль отправлен');
+        };
+    </script>
+</body>
+
+</html>

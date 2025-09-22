@@ -68,7 +68,12 @@
     "file": "File",
     "is_modify": "is Modify",
     "created_by": "Created by",
-    "path": "Path"
+    "path": "Path",
+    "type:": "Type",
+    "type_user": "User",
+    "type_bot": "Bot",
+    "logged_in": "Logged in",
+    "username": "Username"
   },
   "accounts": {
     "title": "Accounts",
@@ -109,7 +114,8 @@
     "check_updates": "Check for updates",
     "choose_backup_folder": "Choose backup folder:",
     "could_not_find_backup": "Could not find backup",
-    "create": "Create"
+    "create": "Create",
+    "animated_bg": "Animated background"
   },
   "logs": {
     "title": "Logs",

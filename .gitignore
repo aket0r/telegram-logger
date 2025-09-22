@@ -149,3 +149,10 @@ release/
 *.session
 *.env
 *.json
+.tg_session
+logs.txt
+src/assets/data
+logs.txt
+/session
+src/assets/data/logs.txt
+bg/animation.gif

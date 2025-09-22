@@ -68,7 +68,13 @@
     "file": "Файл",
     "is_modify": "Изменён?",
     "created_by": "Создан",
-    "path": "Путь"
+    "path": "Путь",
+    "update_btn": "Обновить",
+    "type": "Тип",
+    "type_user": "Пользователь",
+    "type_bot": "Бот",
+    "logged_in": "Дата авторизации",
+    "username": "Пользователь"
   },
   "accounts": {
     "title": "Аккаунты",
@@ -109,7 +115,8 @@
     "check_updates": "Проверить обновления",
     "choose_backup_folder": "Выбрать папку для резервных копий:",
     "could_not_find_backup": "Резервная копия не найдена",
-    "create": "Создать"
+    "create": "Создать",
+    "animated_bg": "Анимированный фон"
   },
   "logs": {
     "title": "Логи",
@@ -128,7 +135,8 @@
     "chats": "Чаты",
     "search_placeholder": "поиск...",
     "messages": "Сообщения:",
-    "no_messages": "Нет сообщений"
+    "no_messages": "Нет сообщений",
+    "from_you": "Вы"
   },
   "file_manager": {
     "title": "Файловый менеджер",
@@ -188,6 +196,7 @@
     "error_restoring_backup": "Ошибка при восстановлении резервной копии.",
     "restart_app": "Пожалуйста, перезапустите приложение, чтобы изменения вступили в силу.",
     "language_changed": "Язык изменён.",
-    "refresh_btn": "Обновить"
+    "refresh_btn": "Обновить",
+    "user_created": "Пользователь создан"
   }
 }
