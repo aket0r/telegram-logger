@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +9,27 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <title>Telegram Logger v1.0</title>
 </head>
+
 <body>
     <section class="main">
         <header>
             <nav>
-                <div class="side">
-                    <div class="container">
-                        <input type="text" placeholder="Search...">
+                <div class="stats">
+                    <div class="block users-block">
+                        <h2 class="title" data-i18n="stats.users">Users</h2>
+                        <h1 class="count">1</h1>
+                    </div>
+                    <div class="block users-block">
+                        <h2 class="title" data-i18n="stats.accounts">Accounts</h2>
+                        <h1 class="count">1</h1>
+                    </div>
+                    <div class="block users-block">
+                        <h2 class="title" data-i18n="stats.logs">Logs</h2>
+                        <h1 class="count">0</h1>
+                    </div>
+                    <div class="block users-block">
+                        <h2 class="title" data-i18n="stats.storage">Storage</h2>
+                        <h1 class="count">0%</h1>
                     </div>
                 </div>
 
@@ -25,19 +40,26 @@
                         </div>
                         <ul class="container">
                             <li class="default-button add-account" data-location="#">
-                                <i class="fa fa-plus" aria-hidden="true"></i> Add account
+                                <i class="fa fa-plus" aria-hidden="true"></i> <strong data-i18n="account.add">Add
+                                    account</strong>
                             </li>
                             <li class="default-button" data-location="#">
-                                <i class="fa fa-refresh" aria-hidden="true"></i> Switch account
+                                <i class="fa fa-refresh" aria-hidden="true"></i> <strong
+                                    data-i18n="account.switch">Refresh
+                                    sessions</strong>
                             </li>
                             <li class="default-button" data-location="settings">
-                                <i class="fa fa-cog" aria-hidden="true"></i> Settings
+                                <i class="fa fa-cog" aria-hidden="true"></i> <strong
+                                    data-i18n="account.settings">Settings</strong>
                             </li>
-                            <li class="default-button" data-location="#" data-isFunction="true" data-function="window.lock()">
-                                <i class="fa fa-lock" aria-hidden="true"></i> Lock
+                            <li class="default-button" data-location="#" data-isFunction="true"
+                                data-function="window.lock()">
+                                <i class="fa fa-lock" aria-hidden="true"></i> <strong
+                                    data-i18n="account.lock">Lock</strong>
                             </li>
                             <li class="default-button" data-location="logout">
-                                <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                                <i class="fa fa-sign-out" aria-hidden="true"></i> <strong
+                                    data-i18n="account.logout">Logout</strong>
                             </li>
                         </ul>
                     </div>
@@ -45,713 +67,771 @@
             </nav>
 
             <main>
-            <section class="default-section dashboard isActive" data-path="dashboard">
-                <div class="title">
-                    <h1>Dashboard</h1>
-                    <button id="add-new-user">
-                        <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                        <span class="text">New user</span>
-                    </button>
-                </div>
-
-                <div class="create-new-user-window">
-                    <div class="close-btn">
-                            &times;
+                <section class="default-section dashboard isActive" data-path="dashboard">
+                    <div class="title">
+                        <h1 data-i18n="dashboard.title">Dashboard</h1>
+                        <button id="add-new-user">
+                            <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                            <span class="text" data-i18n="dashboard.new_user">New user</span>
+                        </button>
                     </div>
 
-                    <div class="container">
-                        <h1>Create new user</h1>
+                    <div class="create-new-user-window">
+                        <div class="close-btn">
+                            &times;
+                        </div>
+
+                        <div class="container">
+                            <h1 data-i18n="dashboard.create_new_user">Create new user</h1>
                             <div class="form">
                                 <div class="min-container">
                                     <label>
-                                        <span>Phone number</span>
-                                        <input type="text" class="phone-number" placeholder="+7xxxxxxxx" id="upd-phone-number">
+                                        <span data-i18n="dashboard.fields.phone_number">Phone number</span>
+                                        <input type="text" class="phone-number" placeholder="+7xxxxxxxx"
+                                            id="upd-phone-number">
                                     </label>
                                     <label>
-                                        <span>User ID</span>
+                                        <span data-i18n="dashboard.fields.user_id">User ID</span>
                                         <input type="text" class="userid" placeholder="@test" id="upd-userid">
                                     </label>
                                     <label>
-                                        <span>Tag</span>
+                                        <span data-i18n="dashboard.fields.tag">Tag</span>
                                         <input type="text" class="tag" placeholder="#important" id="upd-usertag">
                                     </label>
                                     <label>
-                                        <span>Nickname</span>
+                                        <span data-i18n="dashboard.fields.nickname">Nickname</span>
                                         <input type="text" class="nickname" placeholder="user" id="upd-nickname">
                                     </label>
                                 </div>
                                 <div class="min-container selects">
                                     <label>
-                                        <span>Type</span>
+                                        <span data-i18n="dashboard.fields.type">Type</span>
                                         <select name="upd-type" id="upd-type">
-                                            <option value="bot">Bot</option>
-                                            <option selected value="user">User</option>
+                                            <option value="bot" data-i18n="dashboard.fields.bot">Bot</option>
+                                            <option selected value="user" data-i18n="dashboard.fields.user">User
+                                            </option>
                                         </select>
                                     </label>
                                     <label>
-                                        <span>This user is blocked?</span>
+                                        <span data-i18n="dashboard.fields.this_user_is_blocked">This user is
+                                            blocked?</span>
                                         <select name="upd-blocked" id="upd-blocked">
-                                            <option value="blocked">Yes</option>
-                                            <option selected value="not-blocked">No</option>
+                                            <option value="blocked" data-i18n="dashboard.fields.yes">Yes</option>
+                                            <option selected value="not-blocked" data-i18n="dashboard.fields.no">No
+                                            </option>
                                         </select>
                                     </label>
                                 </div>
                                 <textarea id="about" placeholder="about..."></textarea>
                             </div>
                             <div class="actions">
-                                <button id="upd-save">Create</button>
+                                <button id="upd-save" data-i18n="dashboard.create">Create</button>
                             </div>
-                    </div>
-                </div>
-
-                <div class="content">
-                    <table class="table-title">
-                        <tr>
-                            <td>ID</td>
-                            <td>UID</td>
-                            <td>Nickname</td>
-                            <td>Tag</td>
-                            <td>Date</td>
-                            <td>Messages</td>
-                            <td>Latest update</td>
-                            <td></td>
-                        </tr>
-                    </table>
-
-                    <table class="table-content">
-                        <tr>
-                            <td>#1</td>
-                            <td>@test</td>
-                            <td>chappie</td>
-                            <td>BOT</td>
-                            <td>17.08.2025, 17:25:43</td>
-                            <td>100</td>
-                            <td>17.08.2025, 17:25:43</td>
-                            <td class="show-update">Update</td>
-                        </tr>
-                    </table>
-
-                    <div class="update-container">
-                        <div class="close-btn">
-                            &times;
                         </div>
-                        <div class="container">
-                            <h1>Update <span class="userid">@test</span></h1>
-                            <div class="form">
-                                <div class="min-container">
-                                    <label>
-                                        <span>Phone number</span>
-                                        <input type="text" class="phone-number" placeholder="+7xxxxxxxx" id="upd-phone-number">
-                                    </label>
-                                    <label>
-                                        <span>User ID</span>
-                                        <input type="text" class="userid" placeholder="@test" id="upd-userid">
-                                    </label>
-                                    <label>
-                                        <span>Tag</span>
-                                        <input type="text" class="tag" placeholder="#important" id="upd-usertag">
-                                    </label>
-                                    <label>
-                                        <span>Nickname</span>
-                                        <input type="text" class="nickname" placeholder="user" id="upd-nickname">
-                                    </label>
+                    </div>
+
+                    <div class="content">
+                        <table class="table-title">
+                            <tr>
+                                <td data-i18n="table.id">ID</td>
+                                <td data-i18n="table.uid">UID</td>
+                                <td data-i18n="table.nickname">Nickname</td>
+                                <td data-i18n="table.tag">Tag</td>
+                                <td data-i18n="table.date">Date</td>
+                                <td data-i18n="table.messages">Messages</td>
+                                <td data-i18n="table.latest_update">Latest update</td>
+                                <td></td>
+                            </tr>
+                        </table>
+
+                        <table class="table-content">
+                            <tr>
+                                <td>#1</td>
+                                <td>@test</td>
+                                <td>chappie</td>
+                                <td>BOT</td>
+                                <td>17.08.2025, 17:25:43</td>
+                                <td>100</td>
+                                <td>17.08.2025, 17:25:43</td>
+                                <td class="show-update" data-i18n="dashboard.update">Update</td>
+                            </tr>
+                        </table>
+
+                        <div class="update-container">
+                            <div class="close-btn">
+                                &times;
+                            </div>
+                            <div class="container">
+                                <h1><strong data-i18n="dashboard.update">Update</strong> <span
+                                        class="userid">@test</span></h1>
+                                <div class="form">
+                                    <div class="min-container">
+                                        <label>
+                                            <span data-i18n="dashboard.fields.phone_number">Phone number</span>
+                                            <input type="text" class="phone-number" placeholder="+7xxxxxxxx"
+                                                id="upd-phone-number">
+                                        </label>
+                                        <label>
+                                            <span data-i18n="dashboard.fields.user_id">User ID</span>
+                                            <input type="text" class="userid" placeholder="@test" id="upd-userid">
+                                        </label>
+                                        <label>
+                                            <span data-i18n="dashboard.fields.tag">Tag</span>
+                                            <input type="text" class="tag" placeholder="#important" id="upd-usertag">
+                                        </label>
+                                        <label>
+                                            <span data-i18n="dashboard.fields.nickname">Nickname</span>
+                                            <input type="text" class="nickname" placeholder="user" id="upd-nickname">
+                                        </label>
+                                    </div>
+                                    <div class="min-container selects">
+                                        <label>
+                                            <span data-i18n="dashboard.fields.type">Type</span>
+                                            <select name="upd-type" id="upd-type">
+                                                <option value="bot" data-i18n="dashboard.fields.bot">Bot</option>
+                                                <option selected value="user" data-i18n="dashboard.fields.user">User
+                                                </option>
+                                            </select>
+                                        </label>
+                                        <label>
+                                            <span data-i18n="dashboard.fields.this_user_is_blocked">This user is
+                                                blocked?</span>
+                                            <select name="upd-blocked" id="upd-blocked">
+                                                <option value="blocked" data-i18n="dashboard.fields.yes">Yes</option>
+                                                <option selected value="not-blocked" data-i18n="dashboard.fields.no">No
+                                                </option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <textarea id="about" placeholder="about..."></textarea>
                                 </div>
-                                <div class="min-container selects">
-                                    <label>
-                                        <span>Type</span>
-                                        <select name="upd-type" id="upd-type">
-                                            <option value="bot">Bot</option>
-                                            <option selected value="user">User</option>
-                                        </select>
-                                    </label>
-                                    <label>
-                                        <span>This user is blocked?</span>
-                                        <select name="upd-blocked" id="upd-blocked">
-                                            <option value="blocked">Yes</option>
-                                            <option selected value="not-blocked">No</option>
-                                        </select>
-                                    </label>
+                                <div class="actions">
+                                    <button id="upd-save" data-i18n="dashboard.save">Save</button>
+                                    <button id="upd-delete" data-i18n="dashboard.delete">Delete</button>
                                 </div>
-                                <textarea id="about" placeholder="about..."></textarea>
-                            </div>
-                            <div class="actions">
-                                <button id="upd-save">Save</button>
-                                <button id="upd-delete">Delete</button>
                             </div>
                         </div>
                     </div>
-                </div>
-        </section>
+                </section>
 
 
-        <section class="default-section accounts" data-path="accounts">
-            <div class="title">
-                    <h1>Accounts</h1>
-                    <button id="add-new-account">
-                        <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                        <span class="text">New account</span>
-                    </button>
-            </div>
+                <section class="default-section accounts" data-path="accounts">
+                    <div class="title">
+                        <h1 data-i18n="accounts.title">Accounts</h1>
+                        <button id="add-new-account">
+                            <span class="icon"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                            <span class="text" data-i18n="accounts.new_account">New account</span>
+                        </button>
+                    </div>
 
-            <div class="content">
-                <table class="table-title">
-                        <tr>
-                            <td>ID</td>
-                            <td>API_ID</td>
-                            <td>API_HASH</td>
-                            <td>Phone</td>
-                            <td>SESSION_FILE</td>
-                            <td>Date</td>
-                            <td>Latest update</td>
-                            <td></td>
-                        </tr>
-                    </table>
+                    <div class="content">
+                        <table class="table-title">
+                            <tr>
+                                <td data-i18n="table.id">ID</td>
+                                <td data-i18n="table.api_id">API_ID</td>
+                                <td data-i18n="table.api_hash">API_HASH</td>
+                                <td data-i18n="table.phone">Phone</td>
+                                <td data-i18n="table.session_file">SESSION_FILE</td>
+                                <td data-i18n="table.date">Date</td>
+                                <td data-i18n="table.banned">Banned</td>
+                                <td></td>
+                            </tr>
+                        </table>
 
-                    <table class="table-content">
-                        <tr>
-                            <td class="id">#1</td>
-                            <td title="z1UA3iLqw4TI2BscfTxktxwPIFgCaj4PBVET5e0SzIJkEQ59fWMeKZOe50x7rsuM">z1UA3iLqw4TI2BscfTxktxwPIFgCaj4PBVET5e0SzIJkEQ59fWMeKZOe50x7rsuM</td>
-                            <td title="6i6wmkXsAPm1j2vAU5mAzM1tgsWlkAPxyZ4M0W6hUw9M9RHgMVwhgoPRPc81zFDH">6i6wmkXsAPm1j2vAU5mAzM1tgsWlkAPxyZ4M0W6hUw9M9RHgMVwhgoPRPc81zFDH</td>
-                            <td>+76574826798</td>
-                            <td>.tg_session</td>
-                            <td>17.08.2025, 14:44:32</td>
-                            <td>17.08.2025, 14:44:32</td>
-                            <td class="show-update">UPDATE</td>
-                        </tr>
-                </table>
+                        <table class="table-content">
+                            <tr>
+                                <td class="id">#1</td>
+                                <td title="z1UA3iLqw4TI2BscfTxktxwPIFgCaj4PBVET5e0SzIJkEQ59fWMeKZOe50x7rsuM">
+                                    z1UA3iLqw4TI2BscfTxktxwPIFgCaj4PBVET5e0SzIJkEQ59fWMeKZOe50x7rsuM</td>
+                                <td title="6i6wmkXsAPm1j2vAU5mAzM1tgsWlkAPxyZ4M0W6hUw9M9RHgMVwhgoPRPc81zFDH">
+                                    6i6wmkXsAPm1j2vAU5mAzM1tgsWlkAPxyZ4M0W6hUw9M9RHgMVwhgoPRPc81zFDH</td>
+                                <td>+76574826798</td>
+                                <td>.tg_session</td>
+                                <td>17.08.2025, 14:44:32</td>
+                                <td>No</td>
+                                <td class="show-update">UPDATE</td>
+                            </tr>
+                        </table>
 
-                <div class="create-account-win">
-                        <div class="close-btn">
-                            &times;
-                        </div>
-                        <div class="container">
-                            <h1>Create new account</h1>
-                            <div class="form">
-                                <div class="min-container">
-                                    <label>
-                                        <span>Phone number</span>
-                                        <input type="text" class="phone-number" placeholder="+7xxxxxxxx" id="upd-phone-number">
-                                    </label>
-                                    <label>
-                                        <span>API_ID</span>
-                                        <input type="text" class="API_ID" placeholder="API_ID" id="upd-API_ID">
-                                    </label>
-                                    <label>
-                                        <span>API_HASH</span>
-                                        <input type="text" class="API_HASH" placeholder="API_HASH" id="upd-API_HASH">
-                                    </label>
-                                    <label>
-                                        <span>SESSION_FILE</span>
-                                        <input type="file" class="SESSION_FILE" id="upd-SESSION_FILE">
-                                    </label>
+                        <div class="create-account-win">
+                            <div class="close-btn">
+                                &times;
+                            </div>
+                            <div class="container">
+                                <h1 data-i18n="accounts.create_new_account">Create new account</h1>
+                                <div class="form">
+                                    <div class="min-container">
+                                        <label>
+                                            <span data-i18n="dashboard.fields.phone_number">Phone number</span>
+                                            <input type="text" class="phone-number" placeholder="+7xxxxxxxx"
+                                                id="upd-phone-number">
+                                        </label>
+                                        <label>
+                                            <span>API_ID</span>
+                                            <input type="text" class="API_ID" placeholder="API_ID" id="upd-API_ID">
+                                        </label>
+                                        <label>
+                                            <span>API_HASH</span>
+                                            <input type="text" class="API_HASH" placeholder="API_HASH"
+                                                id="upd-API_HASH">
+                                        </label>
+                                        <label>
+                                            <span>SESSION_FILE</span>
+                                            <input type="file" class="SESSION_FILE" id="upd-SESSION_FILE">
+                                        </label>
+                                    </div>
+                                    <div class="min-container selects">
+                                        <label>
+                                            <span data-i18n="dashboard.fields.type">Type</span>
+                                            <select name="upd-type" id="upd-type">
+                                                <option value="active" data-i18n="dashboard.active">Active</option>
+                                                <option value="in_active" data-i18n="dashboard.not_active">Not active
+                                                </option>
+                                            </select>
+                                        </label>
+                                        <label>
+                                            <span data-i18n="dashboard.status">Status</span>
+                                            <select name="upd-status" id="upd-status">
+                                                <option value="banned" data-i18n="dashboard.banned">banned</option>
+                                                <option selected value="safe" data-i18n="dashboard.safe">safe</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <textarea id="about" placeholder="about..."></textarea>
                                 </div>
-                                <div class="min-container selects">
-                                    <label>
-                                        <span>Type</span>
-                                        <select name="upd-type" id="upd-type">
-                                            <option value="active">Active</option>
-                                            <option value="in_active">Not active</option>
-                                        </select>
-                                    </label>
-                                    <label>
-                                        <span>Status</span>
-                                        <select name="upd-status" id="upd-status">
-                                            <option value="banned">banned</option>
-                                            <option selected value="safe">safe</option>
-                                        </select>
-                                    </label>
+                                <div class="actions">
+                                    <button id="upd-save" data-i18n="dashboard.create">Create</button>
                                 </div>
-                                <textarea id="about" placeholder="about..."></textarea>
-                            </div>
-                            <div class="actions">
-                                <button id="upd-save">Create</button>
                             </div>
                         </div>
-                    </div>
 
-                <div class="update-container">
-                        <div class="close-btn">
-                            &times;
-                        </div>
-                        <div class="container">
-                            <h1>Update <span class="account">+76574826798</span></h1>
-                            <div class="form">
-                                <div class="min-container">
-                                    <label>
-                                        <span>Phone number</span>
-                                        <input type="text" class="phone-number" placeholder="+7xxxxxxxx" id="upd-phone-number">
-                                    </label>
-                                    <label>
-                                        <span>API_ID</span>
-                                        <input type="text" class="API_ID" placeholder="API_ID" id="upd-API_ID">
-                                    </label>
-                                    <label>
-                                        <span>API_HASH</span>
-                                        <input type="text" class="API_HASH" placeholder="API_HASH" id="upd-API_HASH">
-                                    </label>
-                                    <label>
-                                        <span>SESSION_FILE</span>
-                                        <input type="file" class="SESSION_FILE" id="upd-SESSION_FILE">
-                                    </label>
+                        <div class="update-container">
+                            <div class="close-btn">
+                                &times;
+                            </div>
+                            <div class="container">
+                                <h1><strong data-i18n="dashboard.update">Update</strong> <span
+                                        class="account">+76574826798</span></h1>
+                                <div class="form">
+                                    <div class="min-container">
+                                        <label>
+                                            <span data-i18n="dashboard.fields.phone_number">Phone number</span>
+                                            <input type="text" class="phone-number" placeholder="+7xxxxxxxx"
+                                                id="upd-phone-number">
+                                        </label>
+                                        <label>
+                                            <span>API_ID</span>
+                                            <input type="text" class="API_ID" placeholder="API_ID" id="upd-API_ID">
+                                        </label>
+                                        <label>
+                                            <span>API_HASH</span>
+                                            <input type="text" class="API_HASH" placeholder="API_HASH"
+                                                id="upd-API_HASH">
+                                        </label>
+                                        <label>
+                                            <span>SESSION_FILE</span>
+                                            <input type="file" class="SESSION_FILE" id="upd-SESSION_FILE">
+                                        </label>
+                                    </div>
+                                    <div class="min-container selects">
+                                        <label>
+                                            <span data-i18n="dashboard.fields.type">Type</span>
+                                            <select name="upd-type" id="upd-type">
+                                                <option value="active" data-i18n="dashboard.active">Active</option>
+                                                <option value="in_active" data-i18n="dashboard.not_active">Not active
+                                                </option>
+                                            </select>
+                                        </label>
+                                        <label>
+                                            <span data-i18n="dashboard.status">Status</span>
+                                            <select name="upd-status" id="upd-status">
+                                                <option value="banned" data-i18n="dashboard.banned">banned</option>
+                                                <option selected value="safe" data-i18n="dashboard.safe">safe</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <textarea id="about" placeholder="about..."></textarea>
                                 </div>
-                                <div class="min-container selects">
-                                    <label>
-                                        <span>Type</span>
-                                        <select name="upd-type" id="upd-type">
-                                            <option value="active">Active</option>
-                                            <option value="in_active">Not active</option>
-                                        </select>
-                                    </label>
-                                    <label>
-                                        <span>Status</span>
-                                        <select name="upd-status" id="upd-status">
-                                            <option value="banned">banned</option>
-                                            <option selected value="safe">safe</option>
-                                        </select>
-                                    </label>
+                                <div class="actions">
+                                    <button id="upd-save" data-i18n="dashboard.save">Save</button>
+                                    <button id="upd-delete" data-i18n="dashboard.delete">Delete</button>
                                 </div>
-                                <textarea id="about" placeholder="about..."></textarea>
-                            </div>
-                            <div class="actions">
-                                <button id="upd-save">Save</button>
-                                <button id="upd-delete">Delete</button>
                             </div>
                         </div>
                     </div>
-            </div>
-        </section>
+                </section>
 
-        <section class="default-section settings" data-path="settings">
-            <div class="title">
-                    <h1>Settings</h1>
-            </div>
+                <section class="default-section settings" data-path="settings">
+                    <div class="title">
+                        <h1 data-i18n="settings.title">Settings</h1>
+                    </div>
 
-            <div class="content">
-                <div class="settings-block">
-                <h2>General</h2>
-                <label class="setting-item">
-                    Language:
-                    <select>
-                        <option>English</option>
-                        <option>Русский</option>
-                    </select>
-                </label>
-                <label class="setting-item">
-                    <span>Auto-start with Windows</span>
-                    <input type="checkbox">
-                    <span class="switcher"></span>
-                </label>
-                <label class="setting-item">
-                    <span>Minimize to tray on close</span>
-                    <input type="checkbox">
-                    <span class="switcher"></span>
-                </label>
-                </div>
-
-                <div class="settings-block">
-                    <h2>Accounts</h2>
-                    <button class="default-button">Reconnect Telegram session</button>
-                    <button class="default-button">Remove session</button>
-                    <button class="default-button">Change 2FA / Auth settings</button>
-                </div>
-
-                <div class="settings-block">
-                <h2>Logs & Data</h2>
-                <label class="setting-item">
-                    Keep logs for
-                    <input type="number" value="30" min="1" style="width:60px">
-                    days
-                </label>
-                <div class="setting-buttons">
-                    <button class="default-button">Clear logs</button>
-                    <button class="default-button">Export JSON</button>
-                    <button class="default-button">Export CSV</button>
-                    <button class="default-button">Backup settings</button>
-                    <button class="default-button">Restore settings</button>
-                </div>
-                </div>
-
-                <div class="settings-block">
-                <h2>Notifications</h2>
-                <label class="setting-item">
-                    <span>Enable sound</span>
-                    <input type="checkbox">
-                    <span class="switcher"></span>
-                </label>
-                <label class="setting-item">
-                    <span>Show popup notifications</span>
-                    <input type="checkbox">
-                    <span class="switcher"></span>
-                </label>
-                <label class="setting-item">
-                    Filters:
-                    <select>
-                    <option>All messages</option>
-                    <option>Only mentions</option>
-                    <option>Specific chats</option>
-                    </select>
-                </label>
-                </div>
-
-                <div class="settings-block">
-                <h2>Security</h2>
-                <label class="setting-item">
-                    <input type="checkbox"> Require PIN/password on startup
-                </label>
-                <label class="setting-item">
-                    Auto-lock after
-                    <input type="number" value="5" min="1" style="width:50px">
-                    minutes of inactivity
-                </label>
-                <label class="setting-item">
-                    <span>Encrypt logs & data</span>
-                    <input type="checkbox">
-                    <span class="switcher"></span>
-                </label>
-                </div>
-
-                <div class="settings-block">
-                <h2>System</h2>
-                <button class="default-button">Check for updates</button>
-                <label class="setting-item">
-                    Choose backup folder:
-                    <input type="file" webkitdirectory directory>
-                </label>
-                <div class="about">
-                    <p><strong>Telegram Logger v1.0</strong></p>
-                    <p>by <span class="colored" data-color="crimson">aket0r</span></p>
-                    <p><a href="https://github.com/aket0r" target="_blank">GitHub</a></p>
-                </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="default-section logs" data-path="logs">
-            <div class="title">
-                    <h1>
-                        Logs
-                        <span class="open-logs-file">Open file</span>
-                    </h1>
-            </div>
-
-            <div class="content">
-                <div class="logs-output">
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                    <div class="logs-item">
-                        <span class="date">[17.08.2025, 22:18:38]</span>
-                        <span class="text">User logged in...</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="default-section terminal" data-path="terminal">
-            <div class="title">
-                    <h1>Terminal</h1>
-            </div>
-
-            <div class="content">
-                <div class="terminal">
-                    <div class="output">
-                        <div class="item status-error">
-                            <span class="date">[17.08.2025, 22:21:14]</span>
-                            <span class="text">ERROR TEST MESSAGE</span>
+                    <div class="content">
+                        <div class="settings-block">
+                            <h2 data-i18n="settings.general">General</h2>
+                            <label class="setting-item">
+                                <strong data-i18n="settings.language">Language:</strong>
+                                <select id="select-lang">
+                                    <option>English</option>
+                                    <option>Русский</option>
+                                </select>
+                            </label>
+                            <label class="setting-item">
+                                <span data-i18n="settings.auto_start">Auto-start with Windows</span>
+                                <input type="checkbox">
+                                <span class="switcher"></span>
+                            </label>
+                            <label class="setting-item">
+                                <span data-i18n="settings.minimize_to_tray">Minimize to tray on close</span>
+                                <input type="checkbox">
+                                <span class="switcher"></span>
+                            </label>
                         </div>
-                        <div class="item status-warning">
-                            <span class="date">[17.08.2025, 22:21:14]</span>
-                            <span class="text">WARNING TEST MESSAGE</span>
+
+                        <div class="settings-block">
+                            <h2 data-i18n="settings.accounts_section">Accounts</h2>
+                            <button class="default-button" data-i18n="settings.reconnect_session">Reconnect Telegram
+                                session</button>
+                            <button class="default-button" data-i18n="settings.remove_session">Remove session</button>
+                            <button class="default-button" data-i18n="settings.change_2fa">Change 2FA / Auth
+                                settings</button>
                         </div>
-                        <div class="item status-success">
-                            <span class="date">[17.08.2025, 22:21:14]</span>
-                            <span class="text">SUCCESS TEST MESSAGE</span>
+
+                        <div class="settings-block">
+                            <h2 data-i18n="settings.logs_data">Logs & Data</h2>
+                            <label class="setting-item">
+                                <strong data-i18n="settings.keep_logs_for">Keep logs for</strong>
+                                <input type="number" value="30" min="1" style="width:60px">
+                                <strong data-i18n="settings.days">days</strong>
+                            </label>
+                            <div class="setting-buttons">
+                                <button class="default-button" data-i18n="settings.clear_logs">Clear logs</button>
+                                <button class="default-button" data-i18n="settings.export_json">Export JSON</button>
+                                <button class="default-button" data-i18n="settings.export_csv">Export CSV</button>
+                                <button class="default-button" data-i18n="settings.backup_settings">Backup
+                                    settings</button>
+                                <button class="default-button" data-i18n="settings.restore_settings">Restore
+                                    settings</button>
+                            </div>
                         </div>
-                        <div class="item status-default">
-                            <span class="date">[17.08.2025, 22:21:14]</span>
-                            <span class="text">DEFAULT TEST MESSAGE</span>
+
+                        <div class="settings-block">
+                            <h2 data-i18n="settings.notifications">Notifications</h2>
+                            <label class="setting-item">
+                                <span data-i18n="settings.enable_sound">Enable sound</span>
+                                <input type="checkbox">
+                                <span class="switcher"></span>
+                            </label>
+                            <label class="setting-item">
+                                <span data-i18n="settings.show_popup">Show popup notifications</span>
+                                <input type="checkbox">
+                                <span class="switcher"></span>
+                            </label>
+                            <label class="setting-item">
+                                <strong data-i18n="settings.filters">Filters:</strong>
+                                <select>
+                                    <option data-i18n="settings.filters_all">All messages</option>
+                                    <option data-i18n="settings.filters_mentions">Only mentions</option>
+                                    <option data-i18n="settings.filters_specific">Specific chats</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="settings-block">
+                            <h2 data-i18n="settings.security">Security</h2>
+                            <label class="setting-item">
+                                <span data-i18n="settings.require_pin">Require PIN/password on startup</span>
+                                <input type="checkbox">
+                                <span class="switcher"></span>
+                            </label>
+
+                            <label class="setting-item">
+                                <strong data-i18n="settings.auto_lock_after">Auto-lock after</strong>
+                                <input type="number" value="5" min="1" style="width:50px">
+                                <strong data-i18n="settings.minutes_of_inactivity">minutes of inactivity</strong>
+                            </label>
+
+                            <label class="setting-item">
+                                <span data-i18n="settings.encrypt_logs">Encrypt logs & data</span>
+                                <input type="checkbox">
+                                <span class="switcher"></span>
+                            </label>
+
+                        </div>
+
+                        <div class="settings-block">
+                            <h2 data-i18n="settings.system">System</h2>
+                            <button class="default-button" data-i18n="settings.check_updates">Check for updates</button>
+                            <label class="setting-item">
+                                <strong data-i18n="settings.choose_backup_folder">Choose backup folder:</strong>
+                                <input type="file" webkitdirectory directory>
+                            </label>
+                            <div class="about">
+                                <p><strong data-i18n="app.title">Telegram Logger v1.0</strong></p>
+                                <p>by <span class="colored" data-color="crimson">aket0r</span></p>
+                                <p><a href="https://github.com/aket0r" target="_blank">GitHub</a></p>
+                            </div>
                         </div>
                     </div>
+                </section>
 
-                    <div class="input">
-                        <input type="text" placeholder="Enter command or '/help'" class="terminal-input">
+                <section class="default-section logs" data-path="logs">
+                    <div class="title">
+                        <h1>
+                            <strong data-i18n="logs.title">Logs</strong>
+                            <span class="open-logs-file" data-i18n="logs.open_file">Open file</span>
+                        </h1>
                     </div>
-                </div>
-            </div>
-        </section>
 
-        <section class="default-section backup" data-path="backup">
-            <div class="title">
-                    <h1>Backup</h1>
-            </div>
+                    <div class="content">
+                        <div class="logs-output">
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                            <div class="logs-item">
+                                <span class="date">[17.08.2025, 22:18:38]</span>
+                                <span class="text">User logged in...</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-            <div class="content">
-                <div class="backup-container">
-                    <h1>Could not find backup</h1>
-                    <button id="create-new-backup">
-                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                        Create
-                    </button>
-                </div>
-            </div>
-        </section>
+                <section class="default-section terminal" data-path="terminal">
+                    <div class="title">
+                        <h1 data-i18n="terminal.title">Terminal</h1>
+                    </div>
 
-        <section class="default-section file-manager" data-path="file-manager">
-            <div class="title">
-                    <h1>File Manager</h1>
-            </div>
+                    <div class="content">
+                        <div class="terminal">
+                            <div class="output">
+                                <div class="item status-error">
+                                    <span class="date">[17.08.2025, 22:21:14]</span>
+                                    <span class="text">ERROR TEST MESSAGE</span>
+                                </div>
+                                <div class="item status-warning">
+                                    <span class="date">[17.08.2025, 22:21:14]</span>
+                                    <span class="text">WARNING TEST MESSAGE</span>
+                                </div>
+                                <div class="item status-success">
+                                    <span class="date">[17.08.2025, 22:21:14]</span>
+                                    <span class="text">SUCCESS TEST MESSAGE</span>
+                                </div>
+                                <div class="item status-default">
+                                    <span class="date">[17.08.2025, 22:21:14]</span>
+                                    <span class="text">DEFAULT TEST MESSAGE</span>
+                                </div>
+                            </div>
 
-            <div class="content">
-                <table class="table-title">
-                        <tr>
-                            <td>ID</td>
-                            <td>File</td>
-                            <td>Date</td>
-                            <td>is Modify</td>
-                            <td>Created by</td>
-                            <td>Path</td>
-                            <td></td>
-                        </tr>
-                    </table>
+                            <div class="input">
+                                <input type="text" placeholder="Enter command or '/help'" class="terminal-input">
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-                    <table class="table-content">
-                        <tr>
-                            <td>#1</td>
-                            <td>logs.txt</td>
-                            <td>17.08.2025, 22:53:14</td>
-                            <td>Yes</td>
-                            <td>System</td>
-                            <td>assets/data/logs.txt</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>#2</td>
-                            <td>start.json</td>
-                            <td>17.08.2025, 22:53:14</td>
-                            <td>Yes</td>
-                            <td>System</td>
-                            <td>assets/data/start.json</td>
-                            <td></td>
-                        </tr>
-                </table>
-            </div>
-        </section>
+                <section class="default-section backup" data-path="backup">
+                    <div class="title">
+                        <h1 data-i18n="backup.title">Backup</h1>
+                    </div>
 
-    </main>
+                    <div class="content">
+                        <div class="backup-container">
+                            <h1 data-i18n="backup.could_not_find_backup">Could not find backup</h1>
+                            <button id="create-new-backup">
+                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                <strong data-i18n="backup.create">Create</strong>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="default-section file-manager" data-path="file-manager">
+                    <div class="title">
+                        <h1 data-i18n="file_manager.title">File Manager</h1>
+                    </div>
+
+                    <div class="content">
+                        <table class="table-title">
+                            <tr>
+                                <td data-i18n="file_manager.id">ID</td>
+                                <td data-i18n="file_manager.file">File</td>
+                                <td data-i18n="file_manager.date">Date</td>
+                                <td data-i18n="file_manager.is_modify">is Modify</td>
+                                <td data-i18n="file_manager.created_by">Created by</td>
+                                <td data-i18n="file_manager.path">Path</td>
+                                <td></td>
+                            </tr>
+                        </table>
+
+                        <table class="table-content">
+                            <tr>
+                                <td>#1</td>
+                                <td>logs.txt</td>
+                                <td>17.08.2025, 22:53:14</td>
+                                <td>Yes</td>
+                                <td>System</td>
+                                <td>assets/data/logs.txt</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>#2</td>
+                                <td>start.json</td>
+                                <td>17.08.2025, 22:53:14</td>
+                                <td>Yes</td>
+                                <td>System</td>
+                                <td>assets/data/start.json</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>#2</td>
+                                <td>user.json</td>
+                                <td>17.08.2025, 22:53:14</td>
+                                <td>Yes</td>
+                                <td>System</td>
+                                <td>assets/data/user.json</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>#2</td>
+                                <td>system.json</td>
+                                <td>17.08.2025, 22:53:14</td>
+                                <td>Yes</td>
+                                <td>System</td>
+                                <td>assets/data/system.json</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="default-section chat" id="" data-uid="">
+                    <div class="top">
+                        <div class="name-logo">
+                            <img src="assets/img/user.png" alt="username" width="50" class="logo">
+                            <h1 class="username"></h1>
+                        </div>
+                        <span class="online-status"></span>
+                        <span class="messages-counter">Messages: <span class="msg-counter">0</span></span>
+                    </div>
+                    <div class="messages"></div>
+                </section>
+
+            </main>
         </header>
 
-        <aside class="aside-bar">
-            <div class="top-container">
-                <div class="title">
-                    <h1>
-                        <span class="icon">
-                            <img src="assets/img/icon.png" width="100" alt="icon">
-                        </span>
-                        <span class="title-text">
-                            Telegram Logger v1.0
-                        </span>
-                    </h1>
-                    <ul>
-                        <li>
-                            by <span class="colored" data-color="crimson">aket0r</span>
-                        </li>
-                        <li>
-                            Latest update <span class="colored" data-color="crimson">17.08.2025</span>
-                        </li>
-                    </ul>
+        <div class="chat-container">
+            <div class="top">
+                <h1 class="title" data-i18n="chat.chats">Chats</h1>
+                <div class="actions">
+                    <input type="text" data-i18n="chat.search_placeholder" class="search-input">
                 </div>
             </div>
 
-            <div class="stats">
-                <div class="block users-block">
-                    <h2 class="title">Users</h2>
-                    <h1 class="count">1</h1>
-                </div>
-                <div class="block users-block">
-                    <h2 class="title">Logs</h2>
-                    <h1 class="count">0</h1>
-                </div>
-                <div class="block users-block">
-                    <h2 class="title">Storage</h2>
-                    <h1 class="count">7%</h1>
-                </div>
-                <div class="block users-block">
-                    <h2 class="title">Accounts</h2>
-                    <h1 class="count">0</h1>
-                </div>
+            <div class="chats-container"></div>
+        </div>
+
+        <aside class="aside-bar">
+            <div class="black-screen"></div>
+
+            <div class="top-container">
+                <ul class="menu-actions">
+                    <li class="default-button show-menu">
+                        <span class="ico"><i class="fa fa-bars" aria-hidden="true"></i></span>
+                        <span class="text" data-i18n="app.version_text">Telegram Logger v1.0.5b</span>
+                    </li>
+                </ul>
             </div>
 
             <div class="main-container">
                 <ul>
                     <li class="default-button location-button" data-location="dashboard">
                         <span class="ico"><i class="fa fa-home" aria-hidden="true"></i></span>
-                        <span class="text">Dashboard</span>
+                        <span class="text" data-i18n="menu.dashboard">Dashboard</span>
                     </li>
                     <li class="default-button location-button" data-location="accounts">
                         <span class="ico"><i class="fa fa-users" aria-hidden="true"></i></span>
-                        <span class="text">Accounts</span>
+                        <span class="text" data-i18n="menu.accounts">Accounts</span>
                     </li>
                     <li class="default-button location-button" data-location="settings">
                         <span class="ico"><i class="fa fa-cogs" aria-hidden="true"></i></span>
-                        <span class="text">Settings</span>
+                        <span class="text" data-i18n="menu.settings">Settings</span>
                     </li>
                     <li class="default-button location-button" data-location="logs">
                         <span class="ico"><i class="fa fa-file-text-o" aria-hidden="true"></i></span>
-                        <span class="text">Logs</span>
+                        <span class="text" data-i18n="menu.logs">Logs</span>
                     </li>
                     <li class="default-button location-button" data-location="terminal">
                         <span class="ico"><i class="fa fa-terminal" aria-hidden="true"></i></span>
-                        <span class="text">Terminal</span>
+                        <span class="text" data-i18n="menu.terminal">Terminal</span>
                     </li>
                     <li class="default-button location-button" data-location="backup">
                         <span class="ico"><i class="fa fa-archive" aria-hidden="true"></i></span>
-                        <span class="text">Backup</span>
+                        <span class="text" data-i18n="menu.backup">Backup</span>
                     </li>
                     <li class="default-button location-button" data-location="file-manager">
                         <span class="ico"><i class="fa fa-hdd-o" aria-hidden="true"></i></span>
-                        <span class="text">File Manager</span>
+                        <span class="text" data-i18n="menu.file_manager">File Manager</span>
                     </li>
                 </ul>
             </div>
         </aside>
     </section>
+
+
+    <section class="pop-ups isActive">
+        <div class="notifications-window">
+            <h1 class="title"></h1>
+            <span class="timeout">10</span>
+            <p class="context"></p>
+            <div class="actions"></div>
+        </div>
+
+        <div class="set-passwd-container hidden">
+            <h1 class="title">Enter new password</h1>
+        </div>
+    </section>
+
+    <script src="assets/js/backend/module.js"></script>
     <script src="assets/js/animations.js"></script>
+    <script src="assets/js/backend/files.js"></script>
+    <script src="assets/js/backend/i18n.js"></script>
 </body>
+
 </html>

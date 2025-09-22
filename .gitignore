@@ -143,3 +143,9 @@ assets/data/start.json
 *.tg_session
 assets/data/*.json
 !assets/data/.keep
+dist/
+release/
+*.log
+*.session
+*.env
+*.json

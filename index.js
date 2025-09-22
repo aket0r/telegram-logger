@@ -4,7 +4,6 @@ const path = require("path");
 const fs = require("fs");
 const os = require("os");
 
-// ---- helpers ----
 function getLocalIPv4() {
   const nets = os.networkInterfaces();
   for (const name of Object.keys(nets)) {
@@ -15,11 +14,10 @@ function getLocalIPv4() {
   return "0.0.0.0";
 }
 
-// ---- storage ----
 class DataManager {
   constructor() {
-    this.baseDir = path.join(__dirname, "assets", "data");
-    this.files = ["logs.txt", "users.json", "system.json"];
+    this.baseDir = path.join(__dirname + '/src', "assets", "data");
+    this.files = ["logs.txt", "users.json", "accounts.json", "system.json"];
     this.ensureStorage();
   }
 
@@ -27,9 +25,22 @@ class DataManager {
     if (!fs.existsSync(this.baseDir)) {
       fs.mkdirSync(this.baseDir, { recursive: true });
     }
+
+    if (!fs.existsSync('src/assets/sessions')) {
+      fs.mkdirSync('src/assets/sessions', { recursive: true });
+    }
+
+    if (!fs.existsSync('src/assets/sessioins/main.json')) fs.writeFileSync('src/assets/sessions/main.json', "[]");
+
     for (const f of this.files) {
       const full = path.join(this.baseDir, f);
-      if (!fs.existsSync(full)) fs.writeFileSync(full, "[]");
+      if (!fs.existsSync(full)) {
+        if (full.includes('.txt')) {
+          fs.writeFileSync(full, "");
+        } else {
+          fs.writeFileSync(full, "[]");
+        }
+      }
     }
   }
 
@@ -59,7 +70,6 @@ class DataManager {
 
 const storage = new DataManager();
 
-// ---- app/tray/window ----
 let tray = null;
 let win = null;
 
@@ -88,17 +98,16 @@ function createTray() {
 function createWindow() {
   win = new BrowserWindow({
     width: 1300,
-    height: 800,
+    height: 900,
     show: true,
-    // autoHideMenuBar: true,
     icon: path.join(__dirname, "assets", "icons", "icon.ico"),
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false, // для быстрой разработки; подумай о true + preload позже
+      contextIsolation: false,
     },
   });
 
-//   win.removeMenu();
+  //   win.removeMenu();
   win.loadFile(path.join(__dirname, "src/index.html"));
 
   win.on("closed", () => {
@@ -117,4 +126,4 @@ app.whenReady().then(() => {
   });
 });
 
-app.on("window-all-closed", () => {});
+app.on("window-all-closed", () => { });

@@ -1,3 +1,58 @@
+/* ===== глобально для всего приложения ===== */
+:root {
+    --sb-thumb: #222;
+    /* цвет ползунка */
+    --sb-size: 8px;
+    /* толщина */
+    --sb-radius: 8px;
+    /* радиус скругления */
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    /* тонкий */
+    scrollbar-color: var(--sb-thumb) transparent;
+    /* ползунок / трек */
+}
+
+/* Chrome/Edge/Safari/Electron */
+::-webkit-scrollbar {
+    width: var(--sb-size);
+    height: var(--sb-size);
+    background: transparent;
+    /* прозрачный фон */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    /* трек прозрачный */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--sb-thumb);
+    border-radius: var(--sb-radius);
+    border: 2px solid transparent;
+    /* тонкая “внутренняя” кромка */
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* hover/active (по желанию) */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #2a2a2a;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: #1a1a1a;
+}
+
+
+
+
 * {
     margin: 0;
     padding: 0;
@@ -5,11 +60,16 @@
 }
 
 
+.hidden {
+    display: none !important;
+}
+
 body {
-    background-color: #222;
+    background-color: #111;
     color: #fff;
     font-family: sans-serif;
     font-weight: 100;
+    height: 100%;
 }
 
 
@@ -22,8 +82,10 @@ section.isActive {
 }
 
 section.main {
-    width: calc(100% - 15rem - 10px);
-    margin-left: calc(15rem + 10px);
+    width: calc(100% - 70px);
+    margin-left: calc(5rem - 10px);
+    height: 100vh;
+    min-height: 100%;
 }
 
 h1 {
@@ -37,17 +99,20 @@ h1 {
     background: #222222;
     float: left;
     color: #fff;
+    height: 100%;
 }
 
 .main header {
     width: 100%;
     margin-left: 0;
+    background: #111;
 }
 
 .main aside {
+    display: flex;
     width: auto;
-    background-color: #222;
-    border-right: 1px solid #333;
+    background-color: #000000;
+    border-right: 1px solid #181818;
     height: 100%;
     text-align: start;
     display: flex;
@@ -56,29 +121,55 @@ h1 {
     flex-direction: column;
     min-height: 735px;
     color: #fff;
-    margin-right: -1px;
     position: fixed;
     left: 0;
+    padding: 0;
+    transition: width 0.25s;
 }
 
-.main aside > * {
+.main aside.on-active {
+    width: 250px;
+}
+
+.main aside .black-screen {
+    display: none;
+}
+
+.main aside.on-active .black-screen {
+    display: block;
+    position: absolute;
+    background: #00000078;
+    width: calc(100vh * 2);
+    height: 100rem;
+    left: 250px;
+    backdrop-filter: blur(3px);
+}
+
+.main aside>* {
     user-select: none;
 }
 
 .main .stats {
     display: flex;
-    max-width: 200px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 5rem;
+    margin-top: 15px;
 }
 
 .main .stats .block {
     display: block;
     background: transparent;
-    padding: 20px 10px;
+    padding: 20px;
     border: 1px solid #333;
     text-align: center;
     font-size: 12px;
-    width: calc(100% / 2);
+    width: auto;
+    min-width: 8rem;
 }
 
 .main .stats .block h1 {
@@ -99,8 +190,37 @@ h1 {
     flex-direction: column;
 }
 
+.main aside .top-container .ico {
+    display: block;
+    margin: 0;
+}
+
 .main aside ul li {
     list-style: none;
+}
+
+.main aside ul.menu-actions li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    padding: 20px;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+.main aside ul.menu-actions li:active {
+    background: #313131;
+}
+
+.main aside ul.menu-actions li span.text {
+    display: none;
+    margin-left: 20px;
+}
+
+.main aside.on-active ul.menu-actions li span.text {
+    display: block;
+    font-size: 14px;
 }
 
 .main aside .top-container .title .title-text {
@@ -108,10 +228,16 @@ h1 {
     margin-bottom: 30px;
     color: #fff;
 }
+
 .main aside .top-container .title .icon {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 25px;
+}
+
+.main aside .main-container {
+    width: 100%;
 }
 
 .main aside .main-container ul {
@@ -119,26 +245,31 @@ h1 {
 }
 
 .main aside .main-container ul li {
-    background: #222;
-    padding: 5px 10px;
+    background: #000000;
+    padding: 30px 25px;
     margin: 0;
     border-radius: 0px;
     color: #fff;
     height: 50px;
     display: flex;
     align-content: center;
-    justify-content: flex-start;
     flex-direction: row;
-    align-items: center;
-    min-width: 250px;
-    border-bottom: 1px solid #333;
+    min-width: auto;
+    border-bottom: 1px solid #181818;
     user-select: none;
     cursor: pointer;
     font-size: 20px;
+    justify-content: center;
+    align-items: center;
 }
 
+.main aside.on-active .main-container ul li {
+    justify-content: flex-start;
+}
+
+
 .main aside .main-container ul li:first-child {
-    border-top: 1px solid #333;
+    border-top: 1px solid #181818;
 }
 
 .main aside .main-container ul li:active {
@@ -147,6 +278,11 @@ h1 {
 
 .main aside .main-container ul li .text {
     margin-left: 25px;
+    display: none;
+}
+
+.main aside.on-active .main-container ul li .text {
+    display: block;
 }
 
 header nav {
@@ -154,8 +290,9 @@ header nav {
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    border-bottom: 1px solid #9999;
+    border-bottom: 1px solid #222;
     margin-bottom: 15px;
+    padding-bottom: 20px;
 }
 
 header nav .side input {
@@ -178,6 +315,7 @@ header nav .side .avatar img {
 header nav .side .account {
     position: relative;
     cursor: pointer;
+    right: 10px;
 }
 
 header nav .side .account .container {
@@ -217,6 +355,7 @@ header nav .side .container li:active {
 
 .default-section {
     padding: 15px;
+    padding-right: 30px;
 }
 
 .default-section .title {
@@ -277,9 +416,9 @@ header nav .side .container li:active {
     width: 700px;
     height: 580px;
     padding: 15px;
-    background: #222;
+    background: transparent;
     border-radius: 10px;
-    border-top: 10px solid #333;
+    border: 3px solid #222;
 }
 
 .default-section .update-container .container h1,
@@ -306,7 +445,7 @@ header nav .side .container li:active {
 }
 
 .default-section .content table {
-    table-layout: fixed;       /* Ãƒâ€˜Ã¢â‚¬Å¾ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒâ€˜Ã‚ÂÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚Â Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒÂÃ‚ÂºÃƒÂÃ‚Â»ÃƒÂÃ‚Â°ÃƒÂÃ‚Â´ÃƒÂÃ‚ÂºÃƒÂÃ‚Â° */
+    table-layout: fixed;
     width: 100%;
     border-collapse: collapse;
 }
@@ -314,6 +453,11 @@ header nav .side .container li:active {
 
 .default-section .content table.table-content {
     border-bottom: 1px solid #9999;
+}
+
+.default-section.accounts .content table.table-content tr td:nth-child(7) {
+    position: relative;
+    left: 10px;
 }
 
 .default-section .content table:last-child {
@@ -339,7 +483,7 @@ header nav .side .container li:active {
 }
 
 .default-section .content table tr:nth-child(2n) {
-    background-color: #222;
+    background-color: #000;
     color: #fff;
 }
 
@@ -351,6 +495,8 @@ header nav .side .container li:active {
     vertical-align: middle;
     width: 100%;
 }
+
+
 
 
 .default-section .content table tr td:last-child {
@@ -451,7 +597,7 @@ header nav .side .container li:active {
     outline: none;
     color: #fff;
     resize: none;
-    background: #222;
+    background: #0000008c;
     border-radius: 5px;
 }
 
@@ -476,7 +622,7 @@ header nav .side .container li:active {
 .default-section .update-container .form .min-container.selects label,
 .default-section .create-new-user-window .form .min-container.selects label,
 .default-section.accounts .create-account-win .form .min-container.selects label {
-    background-color: #333;
+    background-color: #2222225e;
     width: calc(50% - 4px);
     margin: 0 2px;
     padding: 10px 10px;
@@ -525,8 +671,7 @@ header nav .side .container li:active {
 .default-section #add-new-user {
     display: flex;
     position: relative;
-    left: calc(90% - 30px);
-    width: 130px;
+    width: auto;
     padding: 10px;
     background: royalblue;
     color: #fff;
@@ -534,12 +679,19 @@ header nav .side .container li:active {
     border-radius: 5px;
     cursor: pointer;
     outline: none;
-    top: -35px;
+    top: 10px;
     user-select: none;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
+    max-width: 200px;
+    min-width: 100px;
+}
+
+.default-section #add-new-account span.text,
+.default-section #add-new-user span.text {
+    margin-left: 10px;
 }
 
 .default-section #add-new-account:active {
@@ -557,9 +709,9 @@ header nav .side .container li:active {
 }
 
 .default-section.logs .logs-output {
-    background: #111;
+    background: #000;
     overflow-y: auto;
-    max-height: 540px;
+    max-height: 640px;
     padding: 5px;
 }
 
@@ -568,7 +720,7 @@ header nav .side .container li:active {
     background: #000;
     color: #fff;
     padding: 15px;
-    height: 460px;
+    height: calc(67vh);
     overflow-y: auto;
 }
 
@@ -619,7 +771,7 @@ header nav .side .container li:active {
 .default-section.backup .backup-container {
     display: flex;
     width: 100%;
-    background: #222;
+    background: #111;
     padding: 20px;
     justify-content: center;
     align-items: center;
@@ -653,9 +805,12 @@ header nav .side .container li:active {
     margin-right: 10px;
 }
 
-.default-section.file-manager .content .table-content tr td:nth-child(2), .default-section.file-manager .content .table-content tr td:nth-child(2),
-.default-section.file-manager .content .table-content tr td:nth-child(2), .default-section.file-manager .content .table-content tr td:nth-child(6),
-.default-section.file-manager .content .table-content tr td:nth-child(2), .default-section.file-manager .content .table-content tr td:nth-child(3) {
+.default-section.file-manager .content .table-content tr td:nth-child(2),
+.default-section.file-manager .content .table-content tr td:nth-child(2),
+.default-section.file-manager .content .table-content tr td:nth-child(2),
+.default-section.file-manager .content .table-content tr td:nth-child(6),
+.default-section.file-manager .content .table-content tr td:nth-child(2),
+.default-section.file-manager .content .table-content tr td:nth-child(3) {
     overflow: none;
     white-space: none;
     text-overflow: inherit;
@@ -665,7 +820,8 @@ header nav .side .container li:active {
     user-select: none;
 }
 
-.default-section.file-manager .content .table-content tr td:nth-child(2), .default-section.file-manager .content .table-content tr td:nth-child(6) {
+.default-section.file-manager .content .table-content tr td:nth-child(2),
+.default-section.file-manager .content .table-content tr td:nth-child(6) {
     color: #ff9a75;
     overflow: hidden;
     white-space: nowrap;
@@ -682,22 +838,18 @@ header nav .side .container li:active {
     margin-bottom: 10px;
 }
 
-.default-section.settings .settings-block label {
-
-}
-
 .default-section.settings .content {
-  padding: 20px;
+    padding: 20px;
 }
 
 .default-section.settings .settings-block {
-  margin-bottom: 30px;
+    margin-bottom: 30px;
 }
 
 .default-section.settings .settings-block button {
-    background: #111;
+    background: #000;
     border: 1px solid #111;
-    padding: 10px 15px;
+    padding: 15px 15px;
     cursor: pointer;
     user-select: none;
     display: block;
@@ -718,11 +870,11 @@ header nav .side .container li:active {
 }
 
 .default-section.settings .settings-block h2 {
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: crimson;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: crimson;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
 }
 
 .default-section.settings .setting-item {
@@ -733,53 +885,50 @@ header nav .side .container li:active {
     margin: 15px 0;
 }
 
-/* Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â°ÃƒÂÃ‚Â¼ ÃƒÂÃ‚Â¿ÃƒÂÃ‚ÂµÃƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚ÂµÃƒÂÃ‚ÂºÃƒÂÃ‚Â»Ãƒâ€˜Ã…Â½Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚ÂµÃƒÂÃ‚Â»Ãƒâ€˜Ã…â€™ */
 .default-section.settings .setting-item .switcher {
-  position: relative;          /* ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°ÃƒÂÃ‚Â¶ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ ÃƒÂÃ‚Â´ÃƒÂÃ‚Â»Ãƒâ€˜Ã‚Â ::before */
-  width: 60px;
-  height: 30px;
-  border-radius: 14px;
-  background: #878787ee;
-  transition: background .2s;
-  cursor: pointer;
+    position: relative;
+    width: 60px;
+    height: 30px;
+    border-radius: 14px;
+    background: #878787ee;
+    transition: background .2s;
+    cursor: pointer;
 }
 
-/* ÃƒÂÃ‚Â±ÃƒÂÃ‚ÂµÃƒÂÃ‚Â³Ãƒâ€˜Ã†â€™ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Âº */
 .default-section.settings .setting-item .switcher::before {
-  content: '';
-  position: absolute;
-  left: 2px;
-  top: 2px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #fff;
-  transition: transform .2s;
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .2s;
 }
 
-/* Ãƒâ€˜Ã‚ÂÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â€šÂ¬Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°ÃƒÂÃ‚ÂµÃƒÂÃ‚Â¼ Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â´ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â€šÂ¬Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚Â¹ Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚ÂµÃƒÂÃ‚ÂºÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾ÃƒÂÃ‚ÂºÃƒâ€˜Ã‚Â (ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾ ÃƒÂÃ‚Â¶ÃƒÂÃ‚ÂµÃƒÂÃ‚Â»ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸Ãƒâ€˜Ã…Â½) */
 .default-section.settings .setting-item input[type="checkbox"] {
-  appearance: none;
-  position: absolute;
-  opacity: 0;
+    appearance: none;
+    position: absolute;
+    opacity: 0;
 }
 
-/* ÃƒÂÃ…Â¡ÃƒÂÃ¢â‚¬ÂºÃƒÂÃ‚Â®ÃƒÂÃ‚Â§: Ãƒâ€˜Ã‚ÂÃƒÂÃ‚ÂµÃƒÂÃ‚Â»ÃƒÂÃ‚ÂµÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â€šÂ¬ Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾Ãƒâ€˜Ã‚ÂÃƒÂÃ‚ÂµÃƒÂÃ‚Â´Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â²ÃƒÂÃ‚Â° Ãƒâ€˜Ã‚Â .switcher, ÃƒÂÃ‚Â° ÃƒÂÃ‚Â½ÃƒÂÃ‚Âµ ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â»ÃƒÂÃ‚Â½Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚Â¹ ÃƒÂÃ‚Â¿Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ */
-.default-section.settings .setting-item input:checked + .switcher {
-  background: rgb(73, 118, 255); /* Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¹ Ãƒâ€˜Ã¢â‚¬Â ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂµÃƒâ€˜Ã¢â‚¬Å¡ */
+.default-section.settings .setting-item input:checked+.switcher {
+    background: rgb(73, 118, 255);
 }
 
-.default-section.settings .setting-item input:checked + .switcher::before {
-  transform: translateX(30px);
+
+.default-section.settings .setting-item input:checked+.switcher::before {
+    transform: translateX(30px);
 }
 
 
 .default-section.settings .setting-item input[type="checkbox"],
 .default-section.settings .setting-item input[type="number"],
 .default-section.settings .setting-item select {
-  margin-left: auto;
-  outline: none;
-  appearance: none;
+    margin-left: auto;
+    outline: none;
+    appearance: none;
 }
 
 .default-section.settings .setting-item input[type="checkbox"] {
@@ -790,7 +939,7 @@ header nav .side .container li:active {
     padding: 10px 15px;
     width: 130px !important;
     border: 1px solid #111;
-    background: #111;
+    background: #000;
     color: #fff;
     font-size: 19px;
     border-radius: 5px;
@@ -811,27 +960,253 @@ header nav .side .container li:active {
 }
 
 .default-section.settings .setting-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .default-section.settings .about {
-  font-size: 13px;
-  text-align: start;
-  margin-top: 4rem;
-  color: #fff;
-  font-size: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  align-content: space-between;
+    font-size: 13px;
+    text-align: start;
+    margin-top: 4rem;
+    color: #fff;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    align-content: space-between;
 }
 
 
 .about a {
     color: slateblue;
     text-decoration: none;
+}
+
+
+
+.pop-ups .notifications-window {
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+    z-index: 1;
+    background: #111;
+    width: 500px;
+    height: 180px;
+    display: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    border: 1px solid #444;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    flex-direction: column;
+}
+
+.pop-ups .notifications-window.active {
+    display: flex;
+}
+
+.pop-ups .notifications-window .title {
+    user-select: none;
+}
+
+.pop-ups .notifications-window .timeout {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    background: #333;
+    padding: 10px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    text-align: center;
+}
+
+
+.pop-ups .notifications-window .actions {
+    margin-top: 20px;
+}
+
+.pop-ups .notifications-window .actions button {
+    background: #222;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 15px;
+    margin: 0 5px;
+}
+
+
+.chat-container {
+    width: 25rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(50rem + 35px);
+    background: #111;
+    border-right: 1px solid #222;
+    margin-left: 2px;
+    height: 100%;
+}
+
+.chat-container .top {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    padding: 30px 10px;
+    border-bottom: 1px solid #222;
+}
+
+.chat-container .top .actions {
+
+    margin-top: 10px;
+
+    width: 100%;
+}
+
+.chat-container .top .actions input {
+    background: transparent;
+    border: 1px solid #222;
+    font-size: 17px;
+    padding: 5px 10px;
+    width: 100%;
+    outline: none;
+    color: #fff;
+}
+
+.chats-container .chat {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    background: #161616;
+    cursor: pointer;
+    user-select: none;
+    justify-content: space-around;
+    min-height: 100px;
+    overflow: hidden;
+    border-bottom: 1px solid #222;
+}
+
+.chats-container .chat:active {
+    background: #1b1b1b;
+}
+
+.chats-container .chat .title h3 {
+    font-weight: 100;
+    color: #008fc9;
+}
+
+.chats-container .chat .last-message {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.chats-container .chat .last-message .date {
+    position: relative;
+    font-size: 14px;
+    left: 50%;
+    color: #ddd;
+    top: -19px;
+}
+
+.chats-container .chat .last-message .message {
+    color: #eee;
+    margin-top: 20px;
+    max-width: calc(15rem + 25px);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.chat .top {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 30px;
+    border-bottom: 1px solid #222;
+    margin-bottom: 20px;
+    height: 100%;
+}
+
+.chat .top .name-logo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    min-width: 10rem;
+    height: 100%;
+    margin-bottom: 10px;
+}
+
+.chat .top .name-logo img {
+    background: #222;
+    border-radius: 50%;
+    width: 60px;
+}
+
+.chat .top .name-logo .username {
+    color: #008fc9;
+}
+
+.chat .top .online-status {
+    color: #888;
+}
+
+.chat .top .messages-counter {
+    color: #888;
+}
+
+.chat .top .messages-counter .msg-counter {
+    color: #fff;
+    font-weight: 500;
+}
+
+.chat .messages {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 25px;
+    height: calc(35rem + 0px);
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.chat .messages .message {
+    background: #222;
+    border-radius: 5px;
+    padding: 10px 15px;
+    max-width: 45%;
+}
+
+
+.chat .messages .message .date {
+    display: block;
+    font-size: 14px;
+    color: #999;
+    margin-top: 10px;
+}
+
+
+.chat .messages .message[data-from="you"] {
+    align-self: flex-end;
+    color: #fff;
+}
+
+.chat .messages .message[data-from="user"] {
+    color: #ddd;
 }
