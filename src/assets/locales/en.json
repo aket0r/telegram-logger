@@ -134,7 +134,8 @@
     "chats": "Chats",
     "search_placeholder": "search...",
     "messages": "Messages:",
-    "no_messages": "No messages"
+    "no_messages": "No messages",
+    "from_you": "You"
   },
   "file_manager": {
     "title": "File Manager",

@@ -19,13 +19,52 @@ const chatSection = document.querySelector(".default-section.chat");
 const chatHeader = chatSection.querySelector(".name-logo h1");
 const messagesWrap = chatSection.querySelector(".messages");
 const messagesCount = chatSection.querySelector(".messages-counter");
+const chatAvatarImg = chatSection.querySelector(".name-logo img");
+const chatAvatarFull = chatSection.querySelector(".avatar-full-size .container img");
+const chatAvatarFullClose = chatSection.querySelector(".avatar-full-size .close-btn");
+
+chatAvatarFullClose.addEventListener("click", () => {
+  chatSection.querySelector(".avatar-full-size").classList.add("hidden");
+});
+
+chatAvatarImg.addEventListener("click", () => {
+  chatSection.querySelector(".avatar-full-size").classList.remove("hidden");
+});
+
+async function updateChatAvatar(user) {
+  const placeholder = 'assets/img/user.png';
+  if (chatAvatarImg) {
+    chatAvatarImg.onerror = () => { chatAvatarImg.src = placeholder; };
+    chatAvatarImg.src = placeholder;
+  }
+
+  try {
+    const peer = user.peerId || user.username || user.uid || user.id;
+    if (!peer) return;
+
+    const res = await ipcRenderer.invoke('avatar:fetch', { peer });
+    if (!res?.ok || !res.path) return;
+
+    if (fs.existsSync(res.path) && fs.statSync(res.path).size > 0) {
+      const url = pathToFileURL(res.path).href;
+      chatAvatarImg.src = url;
+      chatAvatarFull.src = url;
+    } else {
+      chatAvatarImg.src = placeholder;
+      chatAvatarFull.src = placeholder;
+    }
+  } catch (e) {
+    if (chatAvatarImg) chatAvatarImg.src = placeholder;
+  }
+}
+
 
 const output = document.querySelector('.default-section.chat .output .asset');
 const outputWin = document.querySelector('.default-section.chat .output');
 messagesWrap.addEventListener("click", function (event) {
   event.preventDefault();
   const t = event.target.closest('img');
-  console.log(t);
+  // console.log(t);
 
   if (t?.tagName === 'IMG') {
     output.innerHTML = `<img src="${t.src}">`;
@@ -311,7 +350,7 @@ function renderMessageWithMedia(user, msg) {
       </div>`;
     return div;
   }
-  console.log(media)
+  // console.log(media)
   if (media.kind === 'audio') {
     div.innerHTML = `
       <div class="voice-bubble">
@@ -413,7 +452,7 @@ tableContent.addEventListener("click", function (event) {
   }
 });
 
-const USERS_FILE = path.join(__dirname, "assets", "data", "logs.json");
+const USERS_FILE = path.join(__dirname, "assets", "data", "users.json");
 
 let listenerOutput = 0;
 let listenerOutputData = [];
@@ -478,7 +517,15 @@ function loadUsers(cleanTable = false) {
     let latestMessage;
     let from;
     user.messages.forEach(msg => {
-      if (msg.ts === user.lastTs) latestMessage = `${msg.text}`;
+      if (msg.ts === user.lastTs) {
+        if (msg.text && msg.text.trim()) {
+          latestMessage = `${msg.text}`;
+        } else if (msg.media) {
+          latestMessage = "media message";
+        } else {
+          latestMessage = "";
+        }
+      }
       from = `${msg.dir === 'in' ? user.username || user.name : messages[currentLang].chat.from_you}`;
     })
     chatElement.innerHTML = `
@@ -487,9 +534,10 @@ function loadUsers(cleanTable = false) {
                   </div>
                   <div class="last-message">
                     <span class="date">${user.lastTs}</span>
-                    <span class="message"><strong>${from}</strong>: ${latestMessage}</span>
+                    <span class="message"><strong>${from}:</strong> ${latestMessage === "media message" ? "<strong class='media'><i class='fa fa-film' aria-hidden='true'></i> file</strong>" : latestMessage
+      }</span>
                   </div>
-            `;
+    `;
     chatContainer.appendChild(chatElement);
 
   });
@@ -498,7 +546,7 @@ function loadUsers(cleanTable = false) {
     listenerOutputData.forEach((data, index) => {
       const row = document.createElement('tr');
       row.innerHTML = `
-                      <td>${index + 1}</td>
+                      <td> ${index + 1}</td>
                       <td title="${data.peerId}">${data.peerId || '<none>'}</td>
                       <td title="${data.name}">${data.name || '<unknow>'}</td>
                       <td title="${data.username}">${data.username}</td>
@@ -508,7 +556,7 @@ function loadUsers(cleanTable = false) {
                       <td class="show-update hidden-easy" data-uid="${data.peerId}">
                         ${messages[currentLang].table.update_btn}
                       </td>
-                `;
+`;
       tableContent.appendChild(row);
     })
   }
@@ -586,7 +634,7 @@ BUTTONS.confirmNewAcc.addEventListener("click", function () {
     SESSION_FILE: '.tg_session'
   }
 
-  fs.writeFileSync(Dir_path, `API_ID=${inputs.API_ID}\nAPI_HASH=${inputs.API_HASH}\nPHONE=${inputs.phone}\nSESSION_FILE=${inputs.SESSION_FILE}`);
+  fs.writeFileSync(Dir_path, `API_ID = ${inputs.API_ID} \nAPI_HASH = ${inputs.API_HASH} \nPHONE = ${inputs.phone} \nSESSION_FILE = ${inputs.SESSION_FILE} `);
 });
 
 const switchWindow = function (closedWindows = [], newWindowID, className = ["active", "isActive"]) {
@@ -791,9 +839,17 @@ function findUserByUid(uid) {
 function renderMessage(user, msg) {
   // текстовые — как раньше
   if ((!msg.type || msg.type === 'text') && msg.text) {
+    // console.log(msg);
     const div = document.createElement('div');
     div.className = msg.dir === 'out' ? 'message sent' : 'message received';
-    div.innerHTML = `<p>${msg.text}</p><span class="date">${msg.ts || ''}</span>`;
+    div.innerHTML = `<p> ${msg.text?.replaceAll("\n", "<br>")}</p> <span class="date">${msg.ts || ''}</span></p>`;
+    try {
+      if (msg?.forward.isForwarded === true) {
+        div.classList.add('forwarded');
+        div.innerHTML += `<span class="fwd"><i class="fa fa-reply-all" aria-hidden="true"></i></span>`;
+      }
+    } catch { }
+
     return div;
   }
 
@@ -812,21 +868,33 @@ function renderMessage(user, msg) {
       const div = document.createElement('div');
       div.className = msg.dir === 'out' ? 'message sent' : 'message received';
       div.innerHTML = `
-        <div class="image-bubble">
+  <div class="image-bubble">
           <img src="${url}" alt="image"/>
           <span class="date">${msg.ts || ''}</span>
-        </div>`;
+        </div> `;
+      try {
+        if (msg?.forward.isForwarded === true) {
+          div.classList.add('forwarded');
+          div.innerHTML += `<span class="fwd"><i class="fa fa-reply-all" aria-hidden="true"></i></span>`;
+        }
+      } catch { }
       return div;
     }
     if (media.kind === 'audio') {
       const div = document.createElement('div');
       div.className = msg.dir === 'out' ? 'message sent' : 'message received';
       div.innerHTML = `
-        <div class="voice-bubble">
+  <div class="voice-bubble">
           <button class="play-btn" title="Play/Pause"></button>
           <audio preload="none" src="${url}"></audio>
           <span class="date">${msg.ts || ''}</span>
-        </div>`;
+        </div> `;
+      try {
+        if (msg?.forward.isForwarded === true) {
+          div.classList.add('forwarded');
+          div.innerHTML += `<span class="fwd"><i class="fa fa-reply-all" aria-hidden="true"></i></span>`;
+        }
+      } catch { }
       const btn = div.querySelector('.play-btn');
       const audio = div.querySelector('audio');
       btn.onclick = () => {
@@ -839,10 +907,16 @@ function renderMessage(user, msg) {
       const div = document.createElement('div');
       div.className = msg.dir === 'out' ? 'message sent' : 'message received';
       div.innerHTML = `
-        <div class="video-bubble">
-          <video src="${url}" controls playsinline></video>
+      <div class="video-bubble">
+          <video autoplay="true" loop muted src="${url}" controls playsinline></video>
           <span class="date">${msg.ts || ''}</span>
-        </div>`;
+        </div> `;
+      try {
+        if (msg?.forward.isForwarded === true) {
+          div.classList.add('forwarded');
+          div.innerHTML += `<span class="fwd"><i class="fa fa-reply-all" aria-hidden="true"></i></span>`;
+        }
+      } catch { }
       return div;
     }
     // file/unknown
@@ -850,10 +924,16 @@ function renderMessage(user, msg) {
     const div = document.createElement('div');
     div.className = msg.dir === 'out' ? 'message sent' : 'message received';
     div.innerHTML = `
-      <div class="file-bubble">
+  <div class="file-bubble">
         <a href="${url}" download="${label}">${label}</a>
         <span class="date">${msg.ts || ''}</span>
-      </div>`;
+      </div> `;
+    try {
+      if (msg?.forward.isForwarded === true) {
+        div.classList.add('forwarded');
+        div.innerHTML += `<span class="fwd"><i class="fa fa-reply-all" aria-hidden="true"></i></span>`;
+      }
+    } catch { }
     return div;
   }
 
@@ -867,7 +947,13 @@ function renderMessage(user, msg) {
     const label = msg.media.name || msg.media.file_name || '[media]';
     const div = document.createElement('div');
     div.className = msg.dir === 'out' ? 'message sent' : 'message received';
-    div.innerHTML = `<p>${label}</p><span class="date">${msg.ts || ''}</span>`;
+    div.innerHTML = `<p> ${label}</p> <span class="date">${msg.ts || ''}</span>`;
+    try {
+      if (msg?.forward.isForwarded === true) {
+        div.classList.add('forwarded');
+        div.innerHTML += `<span class="fwd"><i class="fa fa-reply-all" aria-hidden="true"></i></span>`;
+      }
+    } catch { }
     return div;
   }
 
@@ -875,7 +961,13 @@ function renderMessage(user, msg) {
   const div = document.createElement('div');
   div.className = msg.dir === 'out' ? 'message sent' : 'message received';
   const fallback = (msg.text && msg.text.trim()) ? msg.text : '[media]';
-  div.innerHTML = `<p>${fallback}</p><span class="date">${msg.ts || ''}</span>`;
+  div.innerHTML = `<p> ${fallback}</p> <span class="date">${msg.ts || ''}</span>`;
+  try {
+    if (msg?.forward.isForwarded === true) {
+      div.classList.add('forwarded');
+      div.innerHTML += `<span class="fwd"><i class="fa fa-reply-all" aria-hidden="true"></i></span>`;
+    }
+  } catch { }
   return div;
 }
 
@@ -978,10 +1070,12 @@ chatContainer.addEventListener("click", async (e) => {
   chatHeader.textContent = user.username || user.name || "<no name>";
   openChatPeerId = uid;
   renderAllMessages(user);
-
+  updateChatAvatar(user);
   switchWindow("*", "section.chat", "isActive");
   startChatUpdater();
-  document.querySelector('.chat .messages').scrollBy(0, new Date().getTime())
+  setTimeout(() => {
+    document.querySelector('html').scroll(0, new Date().getTime())
+  }, 100);
 });
 
 

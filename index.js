@@ -3,8 +3,9 @@ const { app, BrowserWindow, Menu, Tray, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
+let client = null;
 
-const USERS_FILE = path.join(__dirname, "src/assets/data/logs.json");
+const USERS_FILE = path.join(__dirname, "src/assets/data/users.json");
 const ERROR_LOG = path.join(__dirname, "src/assets/data/logs.txt");
 
 function logError(err) {
@@ -20,7 +21,7 @@ function logError(err) {
 
 function watchUsersFile(win) {
   fs.watchFile(USERS_FILE, { interval: 1000 }, () => {
-    console.log("users.json изменился, отправляю в renderer...");
+    console.log("'users.json' changed sending to renderer...");
     try {
       win.webContents.send("users:changed");
     } catch (e) {
@@ -29,6 +30,7 @@ function watchUsersFile(win) {
     }
   });
 }
+
 
 
 
@@ -67,7 +69,10 @@ class DataManager {
     try {
       const raw = fs.readFileSync(this._full(file), "utf8");
       return file.endsWith(".txt") ? raw : JSON.parse(raw);
-    } catch { return file.endsWith(".txt") ? "" : []; }
+    } catch {
+      logError(err);
+      return file.endsWith(".txt") ? "" : [];
+    }
   }
   write(file, data) {
     const full = this._full(file);

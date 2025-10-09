@@ -19,18 +19,16 @@ class Logs {
     }
 
     get() {
-        console.time('log');
         const data = fs.readFile(LOG_CONFIG.path, 'utf8', async function (err, data) {
             if (err) throw err;
             LOG_CONFIG.logs = data;
         });
 
-        console.timeEnd('log');
         if (LOG_CONFIG.logs.length > 0) {
             console.log('running!')
             this.load();
         } else {
-            console.log(LOG_CONFIG.logs.length, 'err');
+            // console.log(LOG_CONFIG.logs.length, 'err');
             setTimeout(() => {
                 this.get();
             }, 200);

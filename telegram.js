@@ -12,8 +12,13 @@ const API_HASH = process.env.API_HASH || '';
 const PHONE = process.env.PHONE || '';
 const SESSION_FILE = process.env.SESSION_FILE || '.tg_session';
 
-const LOG_FILE = path.join(__dirname, 'src', 'assets', 'data', 'logs.json');
+const sendLog = function (message) {
+    fs.writeFileSync(path.join(__dirname, 'src', 'assets', 'data', 'logs2.txt'), JSON.stringify(message));
+}
+
+const LOG_FILE = path.join(__dirname, 'src', 'assets', 'data', 'users.json');
 const MEDIA_DIR = path.join(__dirname, 'src', 'assets', 'data', 'media');
+console.log(MEDIA_DIR);
 
 ipcMain.handle('media:download', async (_e, { peerId, messageId }) => {
     try {
@@ -80,6 +85,7 @@ function saveConversations(file, arr) {
 function upsertMessage(file, { peerId, name, username, msg }) {
     const convos = readConversations(file);
     const i = convos.findIndex(c => String(c.peerId) === String(peerId));
+    console.log('upsertMessage', { peerId, name, username, msg, foundIndex: i });
     if (i === -1) {
         convos.push({
             peerId: String(peerId),
@@ -90,7 +96,6 @@ function upsertMessage(file, { peerId, name, username, msg }) {
         });
     } else {
         const convo = convos[i];
-        // простая защита от дублей (по id, если есть; иначе по ts+dir+text)
         const last = convo.messages[convo.messages.length - 1];
         const same = (a, b) => (a.id && b.id && a.id === b.id) || (a.ts === b.ts && a.dir === b.dir && a.text === b.text);
         if (!last || !same(last, msg)) {
@@ -106,17 +111,40 @@ function upsertMessage(file, { peerId, name, username, msg }) {
 
 const fmtTS_duo = (sec) => new Date(sec * 1000).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'medium' });
 
-async function normalizeMessage(client, m, { peerId }) {
-    const base = {
-        id: m.id,
-        ts: fmtTS_duo(m.date),
-        dir: m.out ? 'out' : 'in',
-        text: m.message || (m.media ? '[media]' : ''),
-        type: m.message ? 'text' : (m.media ? 'media' : 'text'),
+async function parseForwardMeta(client, m) {
+    const fwd = m.fwdFrom;
+    if (!fwd) return null;
+
+    const meta = {
+        isForwarded: true,
+        date: fwd.date ? new Date(fwd.date * 1000).toISOString() : null,
+        from: { type: 'hidden', id: null, username: null, title: fwd.fromName || null },
+        original: {
+            channelPostId: fwd.channelPost || null,
+            savedFromMsgId: fwd.savedFromMsgId || null
+        }
     };
-    // при желании можешь здесь определить виды медиа (voice/photo/video/file) как раньше
-    return base;
+
+    // Явный источник (user/channel)
+    const srcId = fwd.fromId || fwd.savedFromPeer;
+    if (srcId) {
+        try {
+            const ent = await client.getEntity(srcId);
+            const isChannel = !!ent?.title;
+            meta.from = {
+                type: isChannel ? 'channel' : 'user',
+                id: ent?.id?.toString?.() || null,
+                username: ent?.username || null,
+                title: isChannel
+                    ? ent.title
+                    : [ent.firstName, ent.lastName].filter(Boolean).join(' ') || null
+            };
+        } catch { /* ignore */ }
+    }
+
+    return meta;
 }
+
 
 async function fetchMediaFromPeer({ client, peer, filter, limit = 100, autoDownload = true }) {
     const entity = await client.getEntity(peer);
@@ -211,45 +239,51 @@ function mediaKind(m) {
 
 async function normalizeMessage(client, m, peerMeta) {
     const dir = m.out ? 'out' : 'in';
+
     const base = {
+        id: m.id, // важно: сохраняем id
         ts: new Date(m.date * 1000).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'medium' }),
         dir,
         text: m.message || '',
         type: 'text',
     };
 
+    // ✳️ forward-мета всегда
+    const fwd = await parseForwardMeta(client, m);
+    if (fwd) base.forward = fwd;
+
+    // ✳️ media
     const k = mediaKind(m);
     if (k.kind === 'none') return base;
 
     const peerFolder = path.join(MEDIA_DIR, String(peerMeta.peerId));
     ensureDir(peerFolder);
 
-    const AUTO_MB = 35; // MB Limit
-
+    const AUTO_MB = 35 * 1024 * 1024;
     const media = { kind: k.kind, mime: k.mime, size: null, path: null, name: null, duration: null, thumb: null, lazy: false };
 
     try {
         if (k.kind === 'photo') {
             const filePath = path.join(peerFolder, `photo_${m.id}.jpg`);
             await client.downloadMedia(m.media, { outputFile: filePath });
-            media.path = filePath; base.type = 'photo'; base.media = media; return base;
+            media.path = filePath;
+            base.type = 'photo';
+            base.media = media;
+            return base;
         }
 
         if (k.kind === 'voice' || k.kind === 'video' || k.kind === 'file' || k.kind === 'sticker_or_image') {
             const doc = m.media.document;
             media.name = pickDocName(doc);
+            const size = typeof doc?.size === 'number' ? doc.size : null;
+            media.size = size;
 
-            const szAttr = doc?.size || doc?.sizes;
-            if (typeof szAttr === 'number') media.size = szAttr;
-
-            const canAuto = media.size == null || media.size <= AUTO_MB * 1024 * 1024;
-
+            const canAuto = size == null || size <= AUTO_MB;
             if (canAuto) {
                 const extGuess =
                     k.kind === 'voice' ? '.ogg' :
-                        (k.kind === 'video' ? '.mp4' :
-                            (k.kind === 'sticker_or_image' && (k.mime || '').includes('webp') ? '.webp' : '')) || '';
-
+                        k.kind === 'video' ? '.mp4' :
+                            (k.kind === 'sticker_or_image' && (k.mime || '').includes('webp') ? '.webp' : '') || '';
                 const outFile = path.join(peerFolder, `${k.kind}_${m.id}${extGuess}`);
                 await client.downloadMedia(m.media, { outputFile: outFile });
                 media.path = outFile;
@@ -257,11 +291,9 @@ async function normalizeMessage(client, m, peerMeta) {
                 media.lazy = true;
             }
 
-            if (k.kind === 'voice') base.type = 'voice';
-            else if (k.kind === 'video') base.type = 'video';
-            else if (k.kind === 'sticker_or_image') base.type = 'sticker';
-            else base.type = 'file';
-
+            base.type = (k.kind === 'voice') ? 'voice' :
+                (k.kind === 'video') ? 'video' :
+                    (k.kind === 'sticker_or_image') ? 'sticker' : 'file';
             base.media = media;
             return base;
         }
@@ -270,12 +302,12 @@ async function normalizeMessage(client, m, peerMeta) {
         base.media = { kind: 'unknown' };
         return base;
     } catch (e) {
-        base.type = base.type === 'text' ? 'file' : base.type;
         media.lazy = true;
         base.media = media;
         return base;
     }
 }
+
 
 
 
@@ -490,16 +522,17 @@ async function startTelegram(mainWindow) {
             const username = entity.username || null;
             const displayName = username ? '@' + username
                 : [entity.firstName, entity.lastName].filter(Boolean).join(' ') || 'Unknown';
-
             // Нормализуем СТАРЫЕ→НОВЫЕ (удобно для отрисовки)
             const normalized = [];
             for (const m of out.reverse()) {
                 const nm = await normalizeMessage(client, m, { peerId });
                 normalized.push(nm);
-                // Пишем по ходу (upsert в logs.json)
+
+                nm.from = m.out ? "you" : (who.username || who.name || "Unknown");
+                const displaySenderName = who.name || who.username || "<no name>";
                 upsertMessage(LOG_FILE, {
                     peerId,
-                    name: displayName,
+                    name: displaySenderName == null || displaySenderName == undefined ? displayName : displaySenderName || "<no name>",
                     username,
                     msg: nm
                 });
@@ -513,6 +546,50 @@ async function startTelegram(mainWindow) {
             return { ok: false, error: String(e?.message || e) };
         }
     });
+
+
+    ipcMain.handle('avatar:fetch', async (_e, { peer }) => {
+        try {
+            if (!client) throw new Error('client not initialized');
+
+            const entity = await client.getEntity(peer);
+            const peerId = entity.id?.toString?.() || String(peer);
+
+            const folder = path.join(MEDIA_DIR, peerId);
+            ensureDir(folder);
+            const outPath = path.join(folder, `avatar_${peerId}.jpg`);
+
+            // кэш
+            if (fs.existsSync(outPath) && fs.statSync(outPath).size > 0) {
+                return { ok: true, path: outPath, peerId };
+            }
+
+            try {
+                const res = await client.invoke(new Api.photos.GetUserPhotos({
+                    userId: entity, offset: 0, maxId: 0, limit: 1
+                }));
+                const photo = (res?.photos || [])[0];
+                if (photo) {
+                    await client.downloadMedia(photo, { outputFile: outPath });
+                    return { ok: true, path: outPath, peerId };
+                }
+            } catch (_) { /* может быть не user */ }
+
+            if (entity.photo) {
+                try {
+                    await client.downloadMedia(entity.photo, { outputFile: outPath });
+                    return { ok: true, path: outPath, peerId };
+                } catch (_) { /* ignore */ }
+            }
+
+            return { ok: false, error: 'no avatar', peerId };
+        } catch (e) {
+            console.error('avatar:fetch error:', e);
+            return { ok: false, error: String(e?.message || e) };
+        }
+    });
+
+
 
 
     client.addEventHandler(async (event) => {
@@ -534,7 +611,7 @@ async function startTelegram(mainWindow) {
             username: who.username,
             msg: nm,
         });
-
+        // console.log('New message from', displayName, nm, who);
         // в UI тоже отправляем nm
         mainWindow?.webContents.send('tg:new-log', {
             peerId: who.peerId,
@@ -543,12 +620,6 @@ async function startTelegram(mainWindow) {
             msg: nm,
         });
     }, new NewMessage({}));
-
-
-
-
-
-
 }
 
 module.exports = { startTelegram };
