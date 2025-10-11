@@ -9,7 +9,6 @@ const CONFIG = {
     }
   }
 }
-
 const animatedBg = document.querySelector(".setting-item .animated-bg");
 let isRenderingUsers = false;
 let openChatPeerId = null;
@@ -64,7 +63,6 @@ const outputWin = document.querySelector('.default-section.chat .output');
 messagesWrap.addEventListener("click", function (event) {
   event.preventDefault();
   const t = event.target.closest('img');
-  // console.log(t);
 
   if (t?.tagName === 'IMG') {
     output.innerHTML = `<img src="${t.src}">`;
@@ -77,7 +75,6 @@ q('.output .close-btn').addEventListener("click", function () {
   output.innerHTML = `<img src="#">`;
 });
 
-// по каждому чату запоминаем последний отрисованный message.id
 const lastRenderedMsgIdByPeer = new Map();
 const selectLang = document.getElementById('select-lang');
 const { ipcRenderer } = require("electron");
@@ -103,12 +100,10 @@ function resolveLocalAudio(peerId, msg) {
   const dir = path.join(MEDIA_ROOT, String(peerId));
   if (!existsNonEmptyDir(dir)) return null;
 
-  // 1) прямой путь, если нормализация его сохранила
   if (msg.media?.path && fs.existsSync(msg.media.path)) {
     return msg.media.path;
   }
 
-  // 2) поиск по имени из msg.media.name / file_name
   const files = fs.readdirSync(dir);
   const nameCandidates = [];
   if (msg.media?.name) nameCandidates.push(String(msg.media.name));
@@ -457,49 +452,49 @@ const USERS_FILE = path.join(__dirname, "assets", "data", "users.json");
 let listenerOutput = 0;
 let listenerOutputData = [];
 
+let lastTotalMessages = 0;
+let lastUsersCount = 0;
+
 function startUsersWatcher() {
   setInterval(() => {
     try {
       const raw = fs.readFileSync(USERS_FILE, "utf8");
-      const users = JSON.parse(raw);
-      listenerOutputData = users;
+      const arr = JSON.parse(raw);
 
-      if (Array.isArray(users)) {
-        const totalMessages = users.reduce((acc, u) => acc + (Array.isArray(u.messages) ? u.messages.length : 0), 0);
+      // нормализуем
+      listenerOutputData = (Array.isArray(arr) ? arr : [])
+        .filter(u => u && typeof u === 'object')
+        .map(u => {
+          const msgs = Array.isArray(u.messages) ? u.messages.filter(Boolean) : [];
+          // lastTs: либо сохранённый, либо из последнего сообщения (если есть)
+          const lastMsg = msgs.length ? msgs[msgs.length - 1] : null;
+          return {
+            ...u,
+            messages: msgs,
+            lastTs: u.lastTs ?? (lastMsg?.ts ?? null),
+          };
+        });
 
-        if (totalMessages !== listenerOutput && !isRenderingUsers) {
-          isRenderingUsers = true;
-          listenerOutput = totalMessages;
-          loadUsers(true);
-          // маленькая задержка, чтобы пачка изменений не вызвала флэппинг
-          setTimeout(() => { isRenderingUsers = false; }, 100);
-        }
+      const usersCount = listenerOutputData.length;
+      const totalMessages = listenerOutputData.reduce((acc, u) => acc + u.messages.length, 0);
+
+      const needRender =
+        usersCount !== lastUsersCount ||
+        totalMessages !== lastTotalMessages;
+
+      if (needRender && !isRenderingUsers) {
+        isRenderingUsers = true;
+        lastUsersCount = usersCount;
+        lastTotalMessages = totalMessages;
+        loadUsers(true);
+        setTimeout(() => { isRenderingUsers = false; }, 100);
       }
     } catch (err) {
-      console.warn("Ошибка чтения logs.json:", err);
+      console.error("Ошибка чтения users.json:", err);
     }
   }, 2000);
 }
 
-
-async function loadChat(peer, limit = 200) {
-  const res = await ipcRenderer.invoke('chat:fetchHistory', { peer, limit });
-  if (!res?.ok) {
-    console.warn('chat:fetchHistory error:', res?.error);
-    return;
-  }
-
-  mergeConversation(res.convo);
-
-  // ✅ очистим список перед перерисовкой, чтобы не копилось
-  loadUsers(true);
-
-  // Если сейчас открыт этот чат — дозальём новые сообщения
-  if (openChatPeerId === String(res.convo.peerId)) {
-    const fresh = findUserByUid(res.convo.peerId);
-    if (fresh) appendNewMessages(fresh);
-  }
-}
 
 function loadUsers(cleanTable = false) {
   if (!Array.isArray(listenerOutputData) || listenerOutputData.length === 0) return;
@@ -516,25 +511,45 @@ function loadUsers(cleanTable = false) {
     chatElement.dataset.uid = user.peerId;
     let latestMessage;
     let from;
-    user.messages.forEach(msg => {
-      if (msg.ts === user.lastTs) {
-        if (msg.text && msg.text.trim()) {
-          latestMessage = `${msg.text}`;
-        } else if (msg.media) {
-          latestMessage = "media message";
-        } else {
-          latestMessage = "";
-        }
+    // user.messages.forEach(msg => {
+    //   if (msg.ts === user.lastTs) {
+    //     if (msg.text && msg.text.trim()) {
+    //       latestMessage = `${msg.text}`;
+    //     } else if (msg.media) {
+    //       latestMessage = "media message";
+    //     } else {
+    //       latestMessage = "";
+    //     }
+    //   }
+    //   from = `${msg.dir === 'in' ? user.username || user.name : messages[currentLang].chat.from_you}`;
+    // })
+    const msgs = Array.isArray(user.messages) ? user.messages.filter(Boolean) : [];
+
+    if (msgs.length === 0) return;
+
+    const toTime = v => (v ? Date.parse(v) : 0) || 0;
+    // найдем реально последнее сообщение
+    const lastMsg = (user.lastTs && msgs.find(m => m && m.ts === user.lastTs))
+      ||
+      msgs.reduce((acc, m) => (toTime(m?.ts) >= toTime(acc?.ts) ? m : acc), null);
+
+    if (lastMsg) {
+      if (lastMsg.text && lastMsg.text.trim()) {
+        latestMessage = lastMsg.text;
+      } else if (lastMsg.media) {
+        latestMessage = 'media message';
       }
-      from = `${msg.dir === 'in' ? user.username || user.name : messages[currentLang].chat.from_you}`;
-    })
+
+      const displayName = user.username ? user.username : (user.firstName || 'Unknown');
+      from = lastMsg.dir === 'in' ? displayName : messages[currentLang].chat.from_you;
+    }
     chatElement.innerHTML = `
                   <div class="title">
                     <h3>${user.name}</h3>
                   </div>
                   <div class="last-message">
-                    <span class="date">${user.lastTs}</span>
-                    <span class="message"><strong>${from}:</strong> ${latestMessage === "media message" ? "<strong class='media'><i class='fa fa-film' aria-hidden='true'></i> file</strong>" : latestMessage
+                    <span class="date">${user.lastTs || ''}</span>
+                    <span class="message"><strong>${from}:</strong> ${latestMessage === "media message" ? "<strong class='media'><i class='fa fa-film' aria-hidden='true'></i> file</strong>" : (latestMessage != null) ? latestMessage : ''
       }</span>
                   </div>
     `;
@@ -550,9 +565,9 @@ function loadUsers(cleanTable = false) {
                       <td title="${data.peerId}">${data.peerId || '<none>'}</td>
                       <td title="${data.name}">${data.name || '<unknow>'}</td>
                       <td title="${data.username}">${data.username}</td>
-                      <td title="${data.messages[0].ts}">${data.messages[0].ts || '<unknow>'}</td>
+                      <td title="${data.messages[0]?.ts || '-'}">${data.messages[0]?.ts || '-'}</td>
                       <td title="${data.messages.length}">${data.messages.length}</td>
-                      <td title="${data.messages[data.messages.length - 1].ts}">${data.messages[data.messages.length - 1].ts}</td>
+                      <td title="${data.messages[data.messages.length - 1]?.ts || '-'}">${data.messages[data.messages.length - 1]?.ts || '-'}</td>
                       <td class="show-update hidden-easy" data-uid="${data.peerId}">
                         ${messages[currentLang].table.update_btn}
                       </td>
@@ -560,9 +575,25 @@ function loadUsers(cleanTable = false) {
       tableContent.appendChild(row);
     })
   }
+}
 
-  const usersBar = document.querySelector(".stats .count");
-  usersBar.textContent = listenerOutputData.length;
+
+const checkingInterval = 2000; // ms
+
+const observerUsersLengthContent = function () {
+  setInterval(() => {
+    const usersLengthContent = document.querySelectorAll('.stats .count')[0];
+    let length = 0;
+
+    listenerOutputData.forEach((user) => {
+      if (user.messages.length > 0) length += 1;
+    });
+
+    if (usersLengthContent) {
+      usersLengthContent.textContent = length;
+      usersLengthContent.title = `${messages[currentLang].stats.users_hint} > 0 (${length})`;
+    }
+  }, checkingInterval);
 }
 
 
@@ -585,6 +616,8 @@ function loadAccountData() {
     data[key] = rest.join('=');
   });
 
+  qA('.stats .count')[1].textContent = '1';
+
   q('.default-section.accounts .table-content .api_id').textContent = data['API_ID'];
   q('.default-section.accounts .table-content .api_id').title = data['API_ID'];
   q('.default-section.accounts .table-content .api_hash').textContent = data['API_HASH'];
@@ -595,7 +628,8 @@ function loadAccountData() {
   q('.default-section.accounts .table-content .logged_in').textContent = new Date().toLocaleString();
 }
 
-window.addEventListener("DOMContentLoaded", function () {
+window.addEventListener("DOMContentLoaded", async function () {
+  observerUsersLengthContent();
   if (currentLang == 'ru') {
     selectLang.options[1].selected = true;
   } else {
@@ -612,7 +646,23 @@ window.addEventListener("DOMContentLoaded", function () {
 
   loadAccountData();
   startUsersWatcher();
+  loadImage();
 });
+
+async function loadImage() {
+  const imgEl = q('header nav .side .avatar img');
+  const loggedInUsername = q('.logged-in-account-name');
+  const res = await ipcRenderer.invoke('self:avatar:fetch');
+  if (res?.ok) {
+    if (res.path) imgEl.src = pathToFileURL(res.path).href; // аватар
+    const shown = res.username ? '@' + res.username : (res.name || 'Unknown');
+    loggedInUsername.textContent = shown;
+  } else {
+    imgEl.src = 'assets/img/user.png';
+    loggedInUsername.textContent = 'Unknown';
+  }
+
+}
 
 
 const BUTTONS = Object.freeze({
@@ -622,6 +672,10 @@ const BUTTONS = Object.freeze({
 
 function q(t) {
   return document.querySelector(t);
+}
+
+function qA(t) {
+  return document.querySelectorAll(t);
 }
 
 
@@ -1153,6 +1207,76 @@ animatedBg.addEventListener("change", function () {
   }
 });
 
+const forceLoadWindow = document.querySelector('.force-load-window');
+const forceLoadText = document.querySelector('.force-load-text');
+const progressBar = document.querySelector('.progress-bar');
+const forceLoadMsgBtn = document.querySelector('.force-load-msgs');
+
+let forceLoading = false;
+let fakeTimer = null;
+let onProgress = null;
+
+forceLoadMsgBtn.addEventListener('click', async () => {
+  if (forceLoading) return;
+
+  const ok = confirm(messages[currentLang].settings.force_load_confirm);
+  if (!ok) return;
+
+  forceLoading = true;
+  forceLoadMsgBtn.disabled = true;
+
+  // UI старт
+  forceLoadWindow.classList.remove('hidden');
+  progressBar.value = 0;
+  forceLoadText.textContent = 'Starting…';
+  switchWindow('.default-section .settings', '.default-section .dashboard', ['active', 'isActive']);
+
+  // фейковый прогресс до 90%
+  let p = 0;
+  fakeTimer = setInterval(() => {
+    p = Math.min(p + 2, 90);
+    progressBar.value = p;
+  }, 200);
+
+  // подписка на FLOOD (до invoke!)
+  onProgress = (_e, payload) => {
+    if (payload?.phase === 'flood') {
+      if (fakeTimer) { clearInterval(fakeTimer); fakeTimer = null; }
+      progressBar.value = 90;
+      forceLoadText.textContent = `${messages[currentLang].force_load.flood} ~${payload.seconds}s…`;
+    } else {
+      forceLoadText.textContent = `${messages[currentLang].force_load.continue}`;
+    }
+  };
+  ipcRenderer.on('dialogs:progress', onProgress);
+
+  try {
+    const res = await ipcRenderer.invoke('dialogs:forceLoad', { dialogs: 30, perChat: 50 });
+
+    // завершение
+    if (fakeTimer) { clearInterval(fakeTimer); fakeTimer = null; }
+    progressBar.value = 100;
+
+    if (res?.ok) {
+      forceLoadText.textContent = `Done: ${res.dialogsProcessed}/${res.total ?? res.dialogsProcessed}`;
+      setTimeout(() => forceLoadWindow.classList.add('hidden'), 700);
+    } else {
+      forceLoadText.textContent = `Error: ${res?.error || 'unknown'}`;
+      // окно остаётся открытым, чтобы увидеть ошибку
+    }
+  } catch (e) {
+    if (fakeTimer) { clearInterval(fakeTimer); fakeTimer = null; }
+    forceLoadText.textContent = `Error: ${e?.message || e}`;
+  } finally {
+    // снять подписку и сбросить флаг
+    if (onProgress) {
+      ipcRenderer.removeListener('dialogs:progress', onProgress);
+      onProgress = null;
+    }
+    forceLoadMsgBtn.disabled = false;
+    forceLoading = false;
+  }
+});
 /*
 
 showNotification({

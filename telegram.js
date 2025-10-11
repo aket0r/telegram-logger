@@ -1,3 +1,4 @@
+let client;
 const fs = require('fs');
 const path = require('path');
 const { ipcMain } = require('electron');
@@ -16,9 +17,41 @@ const sendLog = function (message) {
     fs.writeFileSync(path.join(__dirname, 'src', 'assets', 'data', 'logs2.txt'), JSON.stringify(message));
 }
 
+
+
 const LOG_FILE = path.join(__dirname, 'src', 'assets', 'data', 'users.json');
 const MEDIA_DIR = path.join(__dirname, 'src', 'assets', 'data', 'media');
 console.log(MEDIA_DIR);
+const { FloodWaitError } = require('telegram/errors');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+
+function notifyProgress(wc, data) {
+    try { wc?.send('dialogs:progress', data); } catch { }
+}
+
+function parseFloodSeconds(errMsg, secondsField) {
+    if (typeof secondsField === 'number' && Number.isFinite(secondsField)) {
+        return secondsField;
+    }
+    const m = String(errMsg || '').match(/FLOOD_WAIT_(\d+)/i);
+    return m ? Number(m[1]) : 0;
+}
+
+async function safeInvoke(wc, fn) {
+    try {
+        return await fn();
+    } catch (e) {
+        const msg = e?.errorMessage || e?.message || String(e);
+        if (e instanceof FloodWaitError || /FLOOD_WAIT_/i.test(msg)) {
+            const secs = parseFloodSeconds(msg, e?.seconds);
+            notifyProgress(wc, { phase: 'flood', seconds: secs });
+            await sleep(secs * 1000);
+            return await fn(); // одна повторная попытка
+        }
+        throw e;
+    }
+}
 
 ipcMain.handle('media:download', async (_e, { peerId, messageId }) => {
     try {
@@ -82,10 +115,27 @@ function saveConversations(file, arr) {
     fs.writeFileSync(file, JSON.stringify(arr, null, 2), 'utf8');
 }
 
+function upsertConvoHeader(file, { peerId, name, username }) {
+    // console.log('[NewMessage]', { peerId: who.peerId, username: who.username, name: displayName });
+    const convos = readConversations(file);
+    const i = convos.findIndex(c => String(c.peerId) === String(peerId));
+    if (i === -1) {
+        convos.push({ peerId: String(peerId), name: name || 'Unknown', username: username || null, messages: [], lastTs: null });
+    } else {
+        const c = convos[i];
+        if (name && c.name !== name) c.name = name;
+        if (username && c.username !== username) c.username = username;
+    }
+    saveConversations(file, convos);
+}
+
+
+
+
 function upsertMessage(file, { peerId, name, username, msg }) {
     const convos = readConversations(file);
     const i = convos.findIndex(c => String(c.peerId) === String(peerId));
-    console.log('upsertMessage', { peerId, name, username, msg, foundIndex: i });
+
     if (i === -1) {
         convos.push({
             peerId: String(peerId),
@@ -96,15 +146,18 @@ function upsertMessage(file, { peerId, name, username, msg }) {
         });
     } else {
         const convo = convos[i];
-        const last = convo.messages[convo.messages.length - 1];
-        const same = (a, b) => (a.id && b.id && a.id === b.id) || (a.ts === b.ts && a.dir === b.dir && a.text === b.text);
-        if (!last || !same(last, msg)) {
-            convo.messages.push(msg);
-            convo.lastTs = msg.ts;
-        }
-        if (!convo.username && username) convo.username = username;
         if (name && convo.name !== name) convo.name = name;
+        if (username && convo.username !== username) convo.username = username;
+
+        const j = convo.messages.findIndex(m => m.id === msg.id);
+        if (j === -1) {
+            convo.messages.push(msg);
+        } else {
+            convo.messages[j] = mergeShallow(convo.messages[j], msg);
+        }
+        if (msg.ts) convo.lastTs = msg.ts;
     }
+
     saveConversations(file, convos);
     return convos.find(c => String(c.peerId) === String(peerId));
 }
@@ -147,7 +200,7 @@ async function parseForwardMeta(client, m) {
 
 
 async function fetchMediaFromPeer({ client, peer, filter, limit = 100, autoDownload = true }) {
-    const entity = await client.getEntity(peer);
+    const entity = await resolveEntity(client, peer);
     let collected = [];
     let offsetId = 0;
 
@@ -237,6 +290,8 @@ function mediaKind(m) {
     return { kind: 'unknown' };
 }
 
+
+
 async function normalizeMessage(client, m, peerMeta) {
     const dir = m.out ? 'out' : 'in';
 
@@ -307,28 +362,192 @@ async function normalizeMessage(client, m, peerMeta) {
         return base;
     }
 }
+async function collectDMsFromFolder(folderId, need) {
+    let localOffsetDate = 0, localOffsetId = 0, localOffsetPeer = new Api.InputPeerEmpty();
+    let safety = 0;
+    while (collectedDMs.length < need && safety < 2000) {
+        const res = await safeInvoke(wc, () => client.invoke(new Api.messages.GetDialogs({
+            offsetDate: localOffsetDate,
+            offsetId: localOffsetId,
+            offsetPeer: localOffsetPeer,
+            limit: Math.min(100, need - collectedDMs.length),
+            folderId,
+            hash: 0,
+            excludePinned: false,
+        })));
+        const dialogsBatch = res?.dialogs || [];
+        if (!dialogsBatch.length) break;
 
+        const usersById = new Map((res.users || []).map(u => [u.id.valueOf(), u]));
 
+        for (const d of dialogsBatch) {
+            const uId = d.peer?.userId?.valueOf?.();
+            if (!uId) continue;                // только PeerUser
+            const ent = usersById.get(uId);
+            if (!ent) continue;
+            if (me && ent.id?.valueOf?.() === me.id?.valueOf?.()) continue; // self
+            if (ent.bot) continue;                                         // боты — мимо
 
+            // избегаем дублей
+            if (!collectedDMs.some(x => x.id?.valueOf?.() === ent.id?.valueOf?.())) {
+                collectedDMs.push(ent);
+            }
+            if (collectedDMs.length >= need) break;
+        }
 
-function readConversations(file) {
-    try {
-        const raw = fs.readFileSync(file, 'utf8').trim();
-        if (!raw) return [];
-        const json = JSON.parse(raw);
-        return Array.isArray(json) ? json : [];
-    } catch {
-        return [];
+        // корректная пагинация (как выше)
+        const lastDialog = dialogsBatch[dialogsBatch.length - 1];
+        const topMsgId = lastDialog?.topMessage?.valueOf?.() || lastDialog?.topMessage || 0;
+        const topMsgObj = (res.messages || []).find(m => m.id?.valueOf?.() === topMsgId || m.id === topMsgId);
+
+        localOffsetId = topMsgId || 0;
+        localOffsetDate = topMsgObj?.date?.valueOf?.() || (topMsgObj?.date ? Number(topMsgObj.date) : 0);
+        const peer = lastDialog?.peer;
+        localOffsetPeer =
+            peer?.userId ? new Api.InputPeerUser({ userId: peer.userId }) :
+                peer?.chatId ? new Api.InputPeerChat({ chatId: peer.chatId }) :
+                    peer?.channelId ? new Api.InputPeerChannel({ channelId: peer.channelId }) :
+                        new Api.InputPeerEmpty();
+
+        send({ phase: 'collect', found: collectedDMs.length, target: dialogs });
+        safety++;
+        await sleep(150);
     }
+}
+
+
+function titleOfEntity(ent) {
+    const username = ent?.username || null;
+    const name = [ent?.firstName, ent?.lastName].filter(Boolean).join(' ')
+        || ent?.title || 'Unknown';
+    return { username, displayName: username ? '@' + username : name };
+}
+
+// === force load last dialogs and messages ===
+async function forceLoadMessage({ dialogsLimit = 120, perChatLimit = 50 } = {}) {
+    if (!client) throw new Error('client not initialized');
+
+    // свой id (чтобы исключить "Избранное")
+    let me = null;
+    try { me = await client.getMe(); } catch { }
+
+    const last = dialogsBatch[dialogsBatch.length - 1];
+
+    // topMessage — это ID. Найдём сам объект сообщения, чтобы взять date:
+    const topMsgId = last?.topMessage?.valueOf?.() || last?.topMessage || 0;
+    const topMsgObj = (res.messages || []).find(
+        m => (m.id?.valueOf?.() ?? m.id) === topMsgId
+    );
+
+    let collectedDMs = [];         // сюда складываем только PeerUser
+    let offsetId = topMsgId || 0;
+    let offsetDate = topMsgObj?.date?.valueOf?.() || (topMsgObj?.date ? Number(topMsgObj.date) : 0);
+    let offsetPeer = new Api.InputPeerEmpty();
+    let safety = 0;
+
+    const peer = last?.peer;
+    offsetPeer =
+        peer?.userId ? new Api.InputPeerUser({ userId: peer.userId }) :
+            peer?.chatId ? new Api.InputPeerChat({ chatId: peer.chatId }) :
+                peer?.channelId ? new Api.InputPeerChannel({ channelId: peer.channelId }) :
+                    new Api.InputPeerEmpty();
+
+    const seen = new Set(collectedDMs.map(u => String(u.id)));
+    if (!seen.has(String(ent.id))) { collectedDMs.push(ent); seen.add(String(ent.id)); }
+
+
+    while (collectedDMs.length < dialogsLimit && safety < 2000) {
+        const res = await client.invoke(new Api.messages.GetDialogs({
+            offsetDate,
+            offsetId,
+            offsetPeer,
+            limit: Math.min(100, dialogsLimit - collectedDMs.length), // сервер всё равно вернёт меньше
+            hash: 0,
+            folderId: 0,          // только основная папка; если нужно — добавим цикл по 1 (архив)
+            excludePinned: false,
+        }));
+
+        const dialogs = res.dialogs || [];
+        if (!dialogs.length) break;
+
+        const usersById = new Map((res.users || []).map(u => [u.id.valueOf(), u]));
+
+        for (const d of dialogs) {
+            const p = d.peer;
+            const userId = p?.userId?.valueOf?.();
+            if (!userId) continue;
+            const ent = usersById.get(userId);
+            if (!ent) continue;
+            if (me && ent.id?.valueOf?.() === me.id?.valueOf?.()) continue;
+            if (ent.bot) continue;
+
+            collectedDMs.push({ peerEntity: ent, dialogRaw: d });
+            if (collectedDMs.length >= dialogsLimit) break;
+        }
+
+        const lastDialog = dialogs[dialogs.length - 1];
+        offsetDate = lastDialog?.topMessage?.date?.valueOf?.() || 0;
+        offsetId = lastDialog?.topMessage?.id?.valueOf?.() || 0;
+
+        const lastPeer =
+            lastDialog?.peer?.userId ? new Api.InputPeerUser({ userId: lastDialog.peer.userId })
+                : lastDialog?.peer?.chatId ? new Api.InputPeerChat({ chatId: lastDialog.peer.chatId })
+                    : lastDialog?.peer?.channelId ? new Api.InputPeerChannel({ channelId: lastDialog.peer.channelId })
+                        : new Api.InputPeerEmpty();
+
+        offsetPeer = lastPeer;
+
+        safety++;
+        await sleep(150);
+    }
+
+    let processed = 0;
+    for (const { peerEntity: ent } of collectedDMs) {
+        const peerId = String(ent.id);
+        const { username, displayName } = titleOfEntity(ent);
+        const usernameToSave = ent.firstName || ent.username || null;
+
+        upsertConvoHeader(LOG_FILE, { peerId, name: username, username: usernameToSave });
+
+        let msgs = [];
+        try {
+            msgs = await client.getMessages(ent, { limit: perChatLimit, offsetId: 0 });
+        } catch {
+            continue;
+        }
+
+        for (const m of msgs.reverse()) {
+            if (!(m instanceof Api.Message)) continue;
+            const nm = await normalizeMessage(client, m, { peerId });
+            nm.from = m.out ? 'you' : (displayName || 'Unknown');
+
+            upsertMessage(LOG_FILE, {
+                peerId,
+                name: displayName,
+                username: usernameToSave,
+                msg: nm
+            });
+        }
+
+        processed++;
+        await sleep(100);
+    }
+
+    return { ok: true, dialogsProcessed: processed, dmsFound: collectedDMs.length };
 }
 
 async function resolveDMParticipant(m, client) {
     if (!(m.peerId instanceof Api.PeerUser)) return null;
     const entity = m.out ? await client.getEntity(m.peerId) : await m.getSender();
+    let username = entity?.username || null;
 
-    const username = entity?.username || null;
+    if (entity?.firstName != null || entity?.lastName != null) {
+        console.log('Resolved user:', entity.id, entity.username, entity.firstName, entity.lastName);
+        username = (entity?.firstName || '') + (entity?.lastName ? (' ' + entity?.lastName) : '');
+    }
+
     const name =
-        (username ? '@' + username : null) ||
+        (entity?.username ? '@' + entity?.username : null) ||
         [entity?.firstName, entity?.lastName].filter(Boolean).join(' ') ||
         'Unknown';
     const peerId =
@@ -342,34 +561,11 @@ function saveConversations(file, arr) {
     fs.writeFileSync(file, JSON.stringify(arr, null, 2), 'utf8');
 }
 
-function upsertMessage(file, { peerId, name, username, msg }) {
-    const convos = readConversations(file);
-    const idx = convos.findIndex(c => c.peerId === peerId);
-
-    const isDup = (a, b) => a.ts === b.ts && a.dir === b.dir && a.text === b.text;
-
-    if (idx === -1) {
-        const convo = {
-            peerId,
-            name,
-            username: username || null,
-            messages: [msg],
-            lastTs: msg.ts
-        };
-        convos.push(convo);
-    } else {
-        const convo = convos[idx];
-        const last = convo.messages[convo.messages.length - 1];
-        if (!last || !isDup(last, msg)) {
-            convo.messages.push(msg);
-            convo.lastTs = msg.ts;
-        }
-        if (!convo.username && username) convo.username = username;
-        if (convo.name !== name && name) convo.name = name;
-    }
-
-    saveConversations(file, convos);
-    return convos;
+function mergeShallow(a, b) {
+    const out = { ...a, ...b };
+    if (a.media || b.media) out.media = { ...(a.media || {}), ...(b.media || {}) };
+    if (a.forward || b.forward) out.forward = { ...(a.forward || {}), ...(b.forward || {}) };
+    return out;
 }
 
 const fmtTS = (unixSec) =>
@@ -429,6 +625,41 @@ function peerIdOf(m) {
 }
 
 
+// вверх файла рядом с другими утилитами:
+function cleanUsername(input) {
+    if (!input) return null;
+    let s = String(input).trim();
+
+    // t.me/username, https://t.me/username, tg://resolve?domain=username
+    const m1 = s.match(/t\.me\/(@?[\w\d_]+)/i);
+    const m2 = s.match(/domain=([\w\d_]+)/i);
+    if (m1) s = m1[1];
+    if (m2) s = m2[1];
+
+    // убираем @
+    if (s.startsWith('@')) s = s.slice(1);
+
+    // username должен быть a-z0-9_
+    if (!/^[\w\d_]{5,32}$/i.test(s)) return null;
+    return s;
+}
+
+async function resolveEntity(client, raw) {
+    if (typeof raw === 'number' || (typeof raw === 'string' && /^\d+$/.test(raw.trim()))) {
+        return client.getEntity(Number(raw));
+    }
+    const uname = cleanUsername(raw);
+    if (uname) {
+        try {
+            const res = await client.invoke(new Api.contacts.ResolveUsername({ username: uname }));
+            const ent = (res.users && res.users[0]) || (res.chats && res.chats[0]);
+            if (ent) return ent;
+        } catch { }
+        return client.getEntity('@' + uname);
+    }
+    return client.getEntity(raw);
+}
+
 
 
 function loadSession() {
@@ -456,11 +687,12 @@ async function startTelegram(mainWindow) {
         return;
     }
 
-    const client = new TelegramClient(loadSession(), API_ID, API_HASH, {
+    client = new TelegramClient(loadSession(), API_ID, API_HASH, {
         connectionRetries: 5,
         deviceModel: 'Telegram Logger',
         systemVersion: 'Node.js',
         appVersion: '1.0.0',
+        floodSleepThreshold: 0
     });
 
     try {
@@ -504,10 +736,9 @@ async function startTelegram(mainWindow) {
         try {
             if (!client) throw new Error('client not initialized');
             // peer: '@username' | numeric id | string id
-            const entity = await client.getEntity(peer);
+            const entity = await resolveEntity(client, peer);
             const peerId = entity.id?.toString?.() || String(peer);
 
-            // Получаем историю порциями (от новых к старым)
             const out = [];
             let offsetId = 0;
             while (out.length < limit) {
@@ -520,6 +751,8 @@ async function startTelegram(mainWindow) {
 
             // Определим отображаемое имя
             const username = entity.username || null;
+            const name = entity.firstName || entity.title || null;
+            console.log('[UPSERT]', { peerId, username_in: username });
             const displayName = username ? '@' + username
                 : [entity.firstName, entity.lastName].filter(Boolean).join(' ') || 'Unknown';
             // Нормализуем СТАРЫЕ→НОВЫЕ (удобно для отрисовки)
@@ -528,12 +761,12 @@ async function startTelegram(mainWindow) {
                 const nm = await normalizeMessage(client, m, { peerId });
                 normalized.push(nm);
 
-                nm.from = m.out ? "you" : (who.username || who.name || "Unknown");
-                const displaySenderName = who.name || who.username || "<no name>";
+                nm.from = m.out ? "you" : (displayName || "Unknown");
+
                 upsertMessage(LOG_FILE, {
                     peerId,
-                    name: displaySenderName == null || displaySenderName == undefined ? displayName : displaySenderName || "<no name>",
-                    username,
+                    name: name,
+                    username: displayName,
                     msg: nm
                 });
             }
@@ -552,8 +785,16 @@ async function startTelegram(mainWindow) {
         try {
             if (!client) throw new Error('client not initialized');
 
-            const entity = await client.getEntity(peer);
+            const entity = await resolveEntity(client, peer);
             const peerId = entity.id?.toString?.() || String(peer);
+
+            const username = entity.firstName || null;
+            const displayName = username ? '@' + username
+                : [entity.firstName, entity.lastName].filter(Boolean).join(' ') || 'Unknown';
+
+            // Обновим header у диалога, даже если сообщений ещё не тянули
+            upsertConvoHeader(LOG_FILE, { peerId, name: displayName, username });
+
 
             const folder = path.join(MEDIA_DIR, peerId);
             ensureDir(folder);
@@ -589,6 +830,224 @@ async function startTelegram(mainWindow) {
         }
     });
 
+    ipcMain.handle('dialogs:forceLoad', async (e, { dialogs = 1000, perChat = 1000, opId }) => {
+        if (!client) return { ok: false, error: 'client not initialized', opId };
+
+        const wc = e.sender;
+        const send = (data) => { try { wc.send('dialogs:progress', { opId, ...data }); } catch { } };
+        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+        // ===== 1) Сбор только личных диалогов (PeerUser), без ботов и self) =====
+        const collectedDMs = [];
+        const seen = new Set();
+        let offsetDate = 0, offsetId = 0, offsetPeer = new Api.InputPeerEmpty();
+        let safety = 0;
+
+        let me = null;
+        try { me = await client.getMe(); } catch { }
+
+        while (collectedDMs.length < dialogs && safety < 2000) {
+            const res = await safeInvoke(wc, () =>
+                client.invoke(new Api.messages.GetDialogs({
+                    offsetDate, offsetId, offsetPeer,
+                    limit: Math.min(100, dialogs - collectedDMs.length),
+                    folderId: 0, // основная папка
+                    hash: 0, excludePinned: false,
+                }))
+            );
+
+            const dialogsBatch = res?.dialogs || [];
+            if (!dialogsBatch.length) break;
+
+            const usersById = new Map((res.users || []).map(u => [u.id.valueOf(), u]));
+
+            for (const d of dialogsBatch) {
+                const userId = d?.peer?.userId?.valueOf?.();
+                if (!userId) continue; // не PeerUser → пропускаем
+
+                const ent = usersById.get(userId);
+                if (!ent) continue;
+
+                if (me && ent.id?.valueOf?.() === me.id?.valueOf?.()) continue; // исключить "Избранное"
+                if (ent.bot) continue;                                           // исключить ботов
+
+                const key = String(ent.id?.valueOf?.() ?? ent.id);
+                if (seen.has(key)) continue;
+                seen.add(key);
+
+                collectedDMs.push(ent);
+                if (collectedDMs.length >= dialogs) break;
+            }
+
+            // --- корректная пагинация: topMessage — это ID; дату берём из res.messages ---
+            const last = dialogsBatch[dialogsBatch.length - 1];
+            const topMsgId = last?.topMessage?.valueOf?.() || last?.topMessage || 0;
+            const topMsgObj = (res.messages || []).find(m =>
+                (m?.id?.valueOf?.() ?? m?.id) === topMsgId
+            );
+
+            offsetId = topMsgId || 0;
+            offsetDate = topMsgObj?.date?.valueOf?.() || (topMsgObj?.date ? Number(topMsgObj.date) : 0);
+
+            const peer = last?.peer;
+            offsetPeer =
+                peer?.userId ? new Api.InputPeerUser({ userId: peer.userId }) :
+                    peer?.chatId ? new Api.InputPeerChat({ chatId: peer.chatId }) :
+                        peer?.channelId ? new Api.InputPeerChannel({ channelId: peer.channelId }) :
+                            new Api.InputPeerEmpty();
+
+            send({ phase: 'collect', found: collectedDMs.length, target: dialogs });
+            safety++;
+            await sleep(150);
+        }
+
+        // (опционально) добор из Архива, если личек меньше нужного
+        if (collectedDMs.length < dialogs) {
+            offsetDate = 0; offsetId = 0; offsetPeer = new Api.InputPeerEmpty();
+            safety = 0;
+            while (collectedDMs.length < dialogs && safety < 2000) {
+                const res = await safeInvoke(wc, () =>
+                    client.invoke(new Api.messages.GetDialogs({
+                        offsetDate, offsetId, offsetPeer,
+                        limit: Math.min(100, dialogs - collectedDMs.length),
+                        folderId: 1, // архив
+                        hash: 0, excludePinned: false,
+                    }))
+                );
+
+                const dialogsBatch = res?.dialogs || [];
+                if (!dialogsBatch.length) break;
+
+                const usersById = new Map((res.users || []).map(u => [u.id.valueOf(), u]));
+
+                for (const d of dialogsBatch) {
+                    const userId = d?.peer?.userId?.valueOf?.();
+                    if (!userId) continue;
+
+                    const ent = usersById.get(userId);
+                    if (!ent) continue;
+
+                    if (me && ent.id?.valueOf?.() === me.id?.valueOf?.()) continue;
+                    if (ent.bot) continue;
+
+                    const key = String(ent.id?.valueOf?.() ?? ent.id);
+                    if (seen.has(key)) continue;
+                    seen.add(key);
+
+                    collectedDMs.push(ent);
+                    if (collectedDMs.length >= dialogs) break;
+                }
+
+                const last = dialogsBatch[dialogsBatch.length - 1];
+                const topMsgId = last?.topMessage?.valueOf?.() || last?.topMessage || 0;
+                const topMsgObj = (res.messages || []).find(m =>
+                    (m?.id?.valueOf?.() ?? m?.id) === topMsgId
+                );
+
+                offsetId = topMsgId || 0;
+                offsetDate = topMsgObj?.date?.valueOf?.() || (topMsgObj?.date ? Number(topMsgObj.date) : 0);
+
+                const peer = last?.peer;
+                offsetPeer =
+                    peer?.userId ? new Api.InputPeerUser({ userId: peer.userId }) :
+                        peer?.chatId ? new Api.InputPeerChat({ chatId: peer.chatId }) :
+                            peer?.channelId ? new Api.InputPeerChannel({ channelId: peer.channelId }) :
+                                new Api.InputPeerEmpty();
+
+                send({ phase: 'collect', found: collectedDMs.length, target: dialogs });
+                safety++;
+                await sleep(150);
+            }
+        }
+
+        // ===== 2) История по диалогам с пагинацией сообщений =====
+        let processed = 0;
+
+        for (const ent of collectedDMs) {
+            const peerId = String(ent.id);
+            const username = ent.username || null;
+            const name = (ent.firstName !== null) ? ent.firstName : ent.username + ' ' + (ent.lastName !== null) ? ent.lastName : '' || null;
+            const displayName = username
+                ? '@' + username
+                : [ent.firstName, ent.lastName].filter(Boolean).join(' ') || 'Unknown';
+
+            // обновим «шапку» диалога (name/username)
+            upsertConvoHeader(LOG_FILE, { peerId, name: name || displayName, username });
+
+            // пагинация сообщений: собираем до perChat штук
+            const collectedMsgs = [];
+            let offId = 0;
+            while (collectedMsgs.length < perChat) {
+                const batch = await safeInvoke(wc, () =>
+                    client.getMessages(ent, {
+                        limit: Math.min(100, perChat - collectedMsgs.length),
+                        offsetId: offId
+                    })
+                );
+                if (!batch || batch.length === 0) break;
+                collectedMsgs.push(...batch);
+                offId = batch[batch.length - 1].id;
+                if (batch.length < 100) break;
+                await sleep(80);
+            }
+
+            // пишем СТАРЫЕ → НОВЫЕ
+            for (const m of collectedMsgs.reverse()) {
+                if (!(m instanceof Api.Message)) continue;
+                const nm = await normalizeMessage(client, m, { peerId });
+                nm.from = m.out ? 'you' : (displayName || 'Unknown');
+
+                upsertMessage(LOG_FILE, {
+                    peerId,
+                    name: name,
+                    username: displayName,
+                    msg: nm
+                });
+            }
+
+            processed++;
+            send({ phase: 'load', done: processed, total: collectedDMs.length });
+            await sleep(100);
+        }
+
+        send({ phase: 'done', done: processed, total: collectedDMs.length });
+        return { ok: true, dialogsProcessed: processed, total: collectedDMs.length, opId };
+    });
+
+    ipcMain.handle('self:avatar:fetch', async () => {
+        try {
+            if (!client) return { ok: false, error: 'client not initialized' };
+
+            const me = await client.getMe(); // Api.User
+            const peerId = String(me.id);
+            const username = me.username || null;            // <- ваш @username (без @)
+            const name = [me.firstName, me.lastName].filter(Boolean).join(' ') || null;
+
+            const folder = path.join(MEDIA_DIR, 'me');
+            ensureDir(folder);
+            const outPath = path.join(folder, 'avatar_me.jpg');
+
+            // кэш
+            if (fs.existsSync(outPath) && fs.statSync(outPath).size > 0) {
+                return { ok: true, path: outPath, peerId, username, name };
+            }
+
+            // загрузка
+            const res = await client.invoke(new Api.photos.GetUserPhotos({
+                userId: me, offset: 0, maxId: 0, limit: 1
+            }));
+            const photo = (res?.photos || [])[0];
+            if (!photo) return { ok: true, path: null, peerId, username, name }; // аватара нет, но username вернули
+
+            await client.downloadMedia(photo, { outputFile: outPath });
+
+            const exists = fs.existsSync(outPath) && fs.statSync(outPath).size > 0;
+            return { ok: exists, path: exists ? outPath : null, peerId, username, name };
+        } catch (e) {
+            return { ok: false, error: String(e?.message || e) };
+        }
+    });
+
 
 
 
@@ -604,11 +1063,12 @@ async function startTelegram(mainWindow) {
         const nm = await normalizeMessage(client, m, { peerId: who.peerId });
         const displayName = who.name || who.username || "<no name>";
 
+        console.log(`[NewMessage] ${nm.dir === 'out' ? '->' : '<-'} ${who.peerId} ${displayName}:`, safeStr(nm.text), nm.media ? `(media: ${nm.media.kind})` : '');
         // пишем В ТОЙ ЖЕ ФОРМЕ, что и история (без «самодельного rec»)
         upsertMessage(LOG_FILE, {
             peerId: who.peerId,
             name: displayName,
-            username: who.username,
+            username: who.firstName || who.username || null,
             msg: nm,
         });
         // console.log('New message from', displayName, nm, who);

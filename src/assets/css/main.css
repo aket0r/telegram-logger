@@ -15,6 +15,7 @@
     scrollbar-color: var(--sb-thumb) transparent;
     /* ползунок / трек */
     scroll-behavior: smooth;
+    user-select: none;
 }
 
 
@@ -188,12 +189,14 @@ h1 {
 .main .stats .block h1 {
     font-weight: 100;
     font-size: 18px;
+    user-select: none;
 }
 
 .main .stats .block h2 {
     font-weight: 100;
     font-size: 14px;
     margin-bottom: 10px;
+    user-select: none;
 }
 
 .main aside .top-container .title {
@@ -319,9 +322,9 @@ header nav .side input {
 
 header nav .side .avatar img {
     width: 50px;
-    background: #ddd;
+    background: #222;
     border-radius: 50%;
-    padding: 10px;
+    padding: 1px;
 }
 
 
@@ -459,17 +462,23 @@ header nav .side .container li:active {
     padding: 0;
     box-sizing: border-box;
     width: 100%;
+    border-radius: 10px;
 }
 
 .default-section .content table {
     table-layout: fixed;
     width: 100%;
-    border-collapse: collapse;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 
 .default-section .content table.table-content {
     border-bottom: 1px solid #9999;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
 }
 
 .default-section.accounts .content table.table-content tr td:nth-child(7) {
@@ -497,11 +506,21 @@ header nav .side .container li:active {
     align-items: center;
     width: 100%;
     color: #fff;
-    border-bottom: 1px solid #888;
+    backdrop-filter: blur(5px);
+}
+
+.default-section .content table.table-content tr {
+    border-bottom: 1px solid #333;
+}
+
+.default-section .content table.table-content tr:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .default-section .content table tr:nth-child(2n) {
-    background-color: #000;
+    background-color: #2d2d2d96;
     color: #fff;
 }
 
@@ -528,7 +547,7 @@ header nav .side .container li:active {
 
 
 .default-section .content .table-content tr td:nth-child(2) {
-    color: crimson;
+    color: #149bed;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -1142,9 +1161,29 @@ header nav .side .container li:active {
     top: 0;
 }
 
+.chat-container .top h1.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 10px 0 0;
+}
+
+.chat-container .top h1.title .logged-in-account-name {
+    color: #008fc9;
+    font-weight: 100;
+    font-size: 20px;
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .chat-container .chats-container {
     position: sticky;
     top: 131px;
+    overflow-y: auto;
+    max-height: calc(85vh - 10px);
 }
 
 .chat-container .top .actions {
@@ -1265,18 +1304,19 @@ header nav .side .container li:active {
 
 .chat .avatar-full-size .close-btn {
     position: absolute;
-    top: 60px;
-    right: 60px;
-    background: #333;
-    width: 50px;
-    height: 50px;
+    top: 20px;
+    right: 20px;
+    font-size: 35px;
+    background: #1e1e1e;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #444;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 50%;
-    font-size: 24px;
-    user-select: none;
     cursor: pointer;
+    z-index: 190;
 }
 
 .chat .avatar-full-size .container {
@@ -1408,11 +1448,11 @@ header nav .side .container li:active {
     top: 20px;
     right: 20px;
     font-size: 35px;
-    background: #ffffffe8;
+    background: #1e1e1ee8;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    color: #777;
+    color: #444;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1543,4 +1583,51 @@ header nav .side .container li:active {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.force-load-window {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: brightness(0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.force-load-window .container {
+    background: #111;
+    padding: 20px;
+    border: 1px solid #222;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    min-height: 200px;
+}
+
+.force-load-window .container h3 {
+    color: #ddd;
+    margin-bottom: 15px;
+    user-select: none;
+}
+
+.force-load-window .container p {
+    color: #aaa;
+    font-size: 14px;
+    user-select: none;
+    text-align: center;
+    max-width: 400px;
+}
+
+.force-load-window .container input {
+    padding: 5px;
+    display: block;
+    z-index: 1;
+    opacity: 1;
+    width: 100%;
 }

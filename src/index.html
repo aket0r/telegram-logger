@@ -231,7 +231,7 @@
 
                         <table class="table-content">
                             <tr>
-                                <td class="index">#1</td>
+                                <td class="index">1</td>
                                 <td class="api_id" title="">
                                 </td>
                                 <td class="api_hash" title="">
@@ -373,6 +373,11 @@
                                 <span class="switcher"></span>
                             </label>
                             <label class="setting-item">
+                                <span data-i18n="settings.exclude_bots">Exclude bots from the list</span>
+                                <input type="checkbox" checked>
+                                <span class="switcher"></span>
+                            </label>
+                            <label class="setting-item">
                                 <span data-i18n="settings.minimize_to_tray">Minimize to tray on close</span>
                                 <input type="checkbox" disabled checked>
                                 <span class="switcher"></span>
@@ -386,11 +391,9 @@
 
                         <div class="settings-block">
                             <h2 data-i18n="settings.accounts_section">Accounts</h2>
-                            <button class="default-button" data-i18n="settings.reconnect_session">Reconnect Telegram
-                                session</button>
-                            <button class="default-button" data-i18n="settings.remove_session">Remove session</button>
-                            <button class="default-button" data-i18n="settings.change_2fa">Change 2FA / Auth
-                                settings</button>
+                            <button class="default-button force-load-msgs" data-i18n="settings.force_load_messages">
+                                Force download all messages
+                            </button>
                         </div>
 
                         <div class="settings-block">
@@ -616,7 +619,11 @@
 
         <div class="chat-container">
             <div class="top">
-                <h1 class="title" data-i18n="chat.chats">Chats</h1>
+                <h1 class="title">
+                    <span data-i18n="chat.chats">Chats</span>
+                    &#x2022;
+                    <span class="logged-in-account-name"></span>
+                </h1>
                 <div class="actions">
                     <input type="text" data-i18n="chat.search_placeholder" class="search-input">
                 </div>
@@ -683,6 +690,17 @@
 
         <div class="set-passwd-container hidden">
             <h1 class="title">Enter new password</h1>
+        </div>
+
+        <div class="force-load-window hidden">
+            <div class="container">
+                <h3 data-i18n="popups.force_loading_title">The message loading process has been implemented</h3>
+                <p data-i18n="popups.force_loading_content">
+                    Please wait until the download is complete.
+                </p>
+                <span class="force-load-text"></span>
+                <input type="range" class="progress-bar" disabled value="0" min="0" max="100">
+            </div>
         </div>
     </section>
 

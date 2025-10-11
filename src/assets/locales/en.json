@@ -9,7 +9,8 @@
     "users": "Users",
     "accounts": "Accounts",
     "logs": "Logs",
-    "storage": "Storage"
+    "storage": "Storage",
+    "users_hint": "Users with messages:"
   },
   "account": {
     "add": "Add account",
@@ -87,9 +88,8 @@
     "auto_start": "Auto-start with Windows",
     "minimize_to_tray": "Minimize to tray on close",
     "accounts_section": "Accounts",
-    "reconnect_session": "Reconnect Telegram session",
-    "remove_session": "Remove session",
-    "change_2fa": "Change 2FA / Auth settings",
+    "force_load_messages": "Force download all messages",
+    "force_load_confirm": "Are you sure you want to force download all messages? This may take a long time and require significant disk space.",
     "logs_data": "Logs & Data",
     "keep_logs_for": "Keep logs for",
     "days": "days",
@@ -115,7 +115,8 @@
     "choose_backup_folder": "Choose backup folder:",
     "could_not_find_backup": "Could not find backup",
     "create": "Create",
-    "animated_bg": "Animated background"
+    "animated_bg": "Animated background",
+    "exclude_bots": "Exclude bots from the list"
   },
   "logs": {
     "title": "Logs",
@@ -204,5 +205,22 @@
     "restart_app": "You need to restart the app to apply the changes.",
     "language_changed": "Language changed successfully.",
     "refresh_btn": "Refresh"
+  },
+  "popups": {
+    "force_loading_title": "The message loading process has been implemented",
+    "force_loading_content": "Please wait until the download is complete."
+  },
+  "force_load": {
+    "title": "Force load messages",
+    "content": "Are you sure you want to force download all messages? This may take a long time and require significant disk space.",
+    "continue": "continue the process...",
+    "cancel": "Cancel",
+    "loading": "Loading messages...",
+    "flood": "Flood wait",
+    "complete": "Message loading complete",
+    "error": "Error loading messages",
+    "already_loading": "Message loading is already in progress",
+    "continue_btn": "Continue",
+    "stop_btn": "Stop"
   }
 }
